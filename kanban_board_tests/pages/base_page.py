@@ -12,6 +12,9 @@ class BasePage:
     
     def title(self):
         return self.driver.title
+    
+    def current_url(self):
+        return self.driver.current_url
 
     def click(self, locator):
         """Ожидание кликабельности и клик"""

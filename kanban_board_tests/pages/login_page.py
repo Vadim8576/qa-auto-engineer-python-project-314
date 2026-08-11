@@ -1,5 +1,6 @@
-from kanban_board_tests.pages.base_page import BasePage
 from selenium.webdriver.common.by import By
+
+from kanban_board_tests.pages.base_page import BasePage
 
 
 class LoginPage(BasePage):
