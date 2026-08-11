@@ -21,7 +21,7 @@ def test_logout_success(driver, base_url):
         
         page.click((By.CSS_SELECTOR, 'button[aria-label="Profile"]'))
         page.click((By.XPATH, '//li[contains(., "Logout")]'))
-        assert 'login' in page.current_url()
+        assert 'login' in page.get_current_url()
     except Exception as e:
         print('Ошибка:', e)
         raise

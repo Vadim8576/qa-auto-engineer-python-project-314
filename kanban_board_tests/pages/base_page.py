@@ -10,10 +10,10 @@ class BasePage:
     def open(self, url):
         self.driver.get(url)
     
-    def title(self):
+    def get_title(self):
         return self.driver.title
     
-    def current_url(self):
+    def get_current_url(self):
         return self.driver.current_url
 
     def click(self, locator):
