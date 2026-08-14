@@ -4,6 +4,8 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from kanban_board_tests.pages.login_page import LoginPage
+
 
 @pytest.fixture(scope="session")
 def base_url():
@@ -27,3 +29,9 @@ def pages(driver, base_url):
     def _factory(PageCls):
         return PageCls(driver, base_url)
     return _factory
+
+@pytest.fixture
+def logged_in_user(driver, base_url):
+    login = LoginPage(driver)
+    login.open(base_url)
+    login.login("Alex", "Password!")

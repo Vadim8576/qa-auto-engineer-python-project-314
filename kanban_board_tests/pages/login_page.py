@@ -7,9 +7,9 @@ class LoginPage(BasePage):
     USERNAME = (By.ID, ":r4:")
     PASSWORD = (By.ID, ":r6:")
     SUBMIT = (By.CSS_SELECTOR, '[type="submit"]')
-
-    def __init__(self, driver):
-        super().__init__(driver)
+        
+    def is_opened(self):
+        return '/login' in self.get_current_url()
 
     def login(self, username, password):
         self.type(self.USERNAME, username)

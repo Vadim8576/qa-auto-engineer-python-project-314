@@ -1,28 +1,26 @@
 from selenium.webdriver.common.by import By
 
 from kanban_board_tests.pages.login_page import LoginPage
+from kanban_board_tests.pages.dashboard_page import DashboardPage
 
 
-def test_login_success(driver, base_url):
-    try:
-        page = LoginPage(driver)
-        page.open(base_url)    
-        page.login("Alex", "Password!")
-        assert 'Welcome to the administration' in page.text_of((By.ID, 'react-admin-title')) 
+def test_login_success(driver, logged_in_user):
+    try:    
+        dashboard = DashboardPage(driver)
+        assert dashboard.is_opened()
+        assert 'Welcome to the administration' in dashboard.header_text()
     except Exception as e:
         print('Ошибка:', e)
         raise
 
 
-def test_logout_success(driver, base_url):
-    try:
-        page = LoginPage(driver)
-        page.open(base_url)
-        page.login("Alex", "Password!")
+def test_logout_success(driver, logged_in_user):
+    try:    
+        dashboard = DashboardPage(driver)
+        dashboard.logout()
         
-        page.click((By.CSS_SELECTOR, 'button[aria-label="Profile"]'))
-        page.click((By.XPATH, '//li[contains(., "Logout")]'))
-        assert 'login' in page.get_current_url()
+        login_page = LoginPage(driver)
+        assert login_page.is_opened()
     except Exception as e:
         print('Ошибка:', e)
         raise
