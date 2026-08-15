@@ -1,4 +1,3 @@
-from selenium.webdriver.common.by import By
 
 from kanban_board_tests.pages.users_page import UsersPage
 

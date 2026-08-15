@@ -1,7 +1,8 @@
-from selenium.webdriver.common.by import By
 
-from kanban_board_tests.pages.login_page import LoginPage
+
+
 from kanban_board_tests.pages.dashboard_page import DashboardPage
+from kanban_board_tests.pages.login_page import LoginPage
 
 
 def test_login_success(driver, logged_in_user):
@@ -15,9 +16,11 @@ def test_login_success(driver, logged_in_user):
 
 
 def test_logout_success(driver, logged_in_user):
-    try:    
+    try:           
         dashboard = DashboardPage(driver)
         dashboard.logout()
+        
+        # logging.info('!!!!!!!!!!!!!!!')
         
         login_page = LoginPage(driver)
         assert login_page.is_opened()

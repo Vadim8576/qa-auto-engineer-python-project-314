@@ -1,6 +1,6 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
 
 
 class BasePage:
@@ -17,8 +17,12 @@ class BasePage:
     def get_title(self):
         return self.driver.title
     
-    def get_current_url(self):
+    @property
+    def current_url(self):
         return self.driver.current_url
+    
+    # def get_current_url(self):
+    #     return self.driver.current_url
 
     def click(self, locator):
         el = self.wait.until(EC.element_to_be_clickable(locator))

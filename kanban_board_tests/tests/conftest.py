@@ -1,3 +1,4 @@
+import logging
 import os
 
 import pytest
@@ -6,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 
 from kanban_board_tests.pages.login_page import LoginPage
 
+logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope="session")
 def base_url():
@@ -33,5 +35,7 @@ def pages(driver, base_url):
 @pytest.fixture
 def logged_in_user(driver, base_url):
     login = LoginPage(driver)
+    logger.info("Opening login page: %s", base_url)
     login.open(base_url)
     login.login("Alex", "Password!")
+    logger.info('Logged in as Alex')

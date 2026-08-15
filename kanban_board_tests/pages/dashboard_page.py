@@ -1,8 +1,8 @@
+from urllib.parse import urlparse
+
 from selenium.webdriver.common.by import By
 
 from kanban_board_tests.pages.base_page import BasePage
-
-from urllib.parse import urlparse
 
 
 class DashboardPage(BasePage):
@@ -10,7 +10,7 @@ class DashboardPage(BasePage):
     LOGOUT = (By.XPATH, '//li[contains(., "Logout")]')
 
     def is_opened(self):
-        return urlparse(self.driver.current_url).path in ('/', '')   
+        return urlparse(self.current_url).path in ('/', '')   
 
     def logout(self):
         self.click(self.PROFILE)
