@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def base_url():
     return os.getenv("APP_BASE_URL", "http://localhost:5173")
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def driver():
     options = Options()
     options.add_argument("--window-size=1366,768")
@@ -32,7 +32,7 @@ def pages(driver, base_url):
         return PageCls(driver, base_url)
     return _factory
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def logged_in_user(driver, base_url):
     login = LoginPage(driver)
     logger.info("Opening login page: %s", base_url)

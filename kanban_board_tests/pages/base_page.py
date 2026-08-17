@@ -20,9 +20,6 @@ class BasePage:
     @property
     def current_url(self):
         return self.driver.current_url
-    
-    # def get_current_url(self):
-    #     return self.driver.current_url
 
     def click(self, locator):
         el = self.wait.until(EC.element_to_be_clickable(locator))
