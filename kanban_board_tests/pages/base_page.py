@@ -35,7 +35,7 @@ class BasePage:
         return el.text
     
     def value_of(self, locator):
-        el = self.wait.until(EC.visibility_of_element_located(locator))
+        el = self.wait.until(EC.element_to_be_clickable(locator))
         return el.get_attribute('value')
 
     def header_text(self):

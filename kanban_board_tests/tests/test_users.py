@@ -1,14 +1,18 @@
 import logging
 
 from kanban_board_tests.pages.users_page import UsersPage
+from kanban_board_tests.pages.edit_user_page import EditUserPage
 from kanban_board_tests.pages.dashboard_page import DashboardPage
 from kanban_board_tests.pages.user_creation_page import UserCreationPage
 from kanban_board_tests.pages.menu_component import Menu
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+
 logger = logging.getLogger(__name__)
 
 def test_creation_user(driver, logged_in_user):
-    logger.info('Test creation user')
+
     # dashboard = DashboardPage(driver)
     # assert dashboard.is_opened()
     # assert 'Welcome to the administration' in dashboard.header_text()
@@ -21,6 +25,7 @@ def test_creation_user(driver, logged_in_user):
         
     users_page.create_user()
     logger.info('Button "Create user" pressed')
+        
         
     user_creation = UserCreationPage(driver)
     user_creation.is_opened()
@@ -54,12 +59,16 @@ def test_creation_user(driver, logged_in_user):
 
 
 def test_users_table_is_visibility(driver, logged_in_user):
+
     users_page = UsersPage(driver)
     assert users_page.users_table_loads(), 'Users table not loaded!'
 
     parsed_users = users_page.user_table_parse()
     assert len(parsed_users) > 0, 'User not found!'
     logger.info('Users table loaded')
+
+
+
 
     missing_issues = []
 
@@ -95,23 +104,83 @@ def test_users_table_is_visibility(driver, logged_in_user):
 
 
 def test_edit_user_success(driver, logged_in_user, base_url):
-    users_page = UsersPage(driver)
     
+    menu = Menu(driver)
+    menu.go_to('Users')
+    logger.info(f'Go to Users page')
+       
+    users_page = UsersPage(driver)
+
+    parsed_users = users_page.user_table_parse()
+    # logger.info(parsed_users)
+    
+    
+    
+    
+    edit_user_page = EditUserPage(driver)
     USER_ID = '1'
     
     logger.info(f'Edit user (ID = {USER_ID})')
-    users_page.edit_user_by_id(base_url, USER_ID)
     
-    assert users_page.is_editing(USER_ID), f'Expected edit page for user {USER_ID}, but condition is False'
+    
+    
+    
+    
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    edit_user_page.edit_user_by_id(base_url, USER_ID)
+    
+    
+    
+    assert edit_user_page.is_editing(USER_ID), f'Expected edit page for user {USER_ID}, but condition is False'
     logger.info(f'Open edit page user {USER_ID}')
     
-    parsed_users = users_page.user_table_parse()
+    
+    
+    
+    
+    logger.info(f'Страница {users_page.current_url}')
+    
+    
+    
+    
+    # driver.save_screenshot("after_open.png")
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    assert 'User john@google.com' in edit_user_page.header_text()
+    logger.info(f'User john@google.com')
+
+    
+    
+    elements = driver.find_elements(By.CSS_SELECTOR, 'input[name="email"]')
+    logger.info("Найдено input[name='email']: %d", len(elements))
+    
+    
+    logger.info(f'Get editing user data')
     editing_user_data = users_page.get_editing_user_data()
+    logger.info(f'Data received')
+    
     editing_user_data['id'] = USER_ID
     
-    for p_u in parsed_users:
-        if p_u == editing_user_data:
-            # .....................
+    
+    
+    
+    logger.info(parsed_users)
+    
+    filtered_users = list(
+        filter(lambda u: str(u.get('id')) == USER_ID, parsed_users)
+    )
+    
+    assert filtered_users[0] == editing_user_data
     
     
     
