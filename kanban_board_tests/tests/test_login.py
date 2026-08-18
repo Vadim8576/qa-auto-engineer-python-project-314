@@ -1,6 +1,9 @@
+import logging
+
 from kanban_board_tests.pages.dashboard_page import DashboardPage
 from kanban_board_tests.pages.login_page import LoginPage
 
+logger = logging.getLogger(__name__)
 '''
 def test_login_success(driver, logged_in_user):
     logger.info('Test login success')
@@ -24,5 +27,4 @@ def test_logout_success(driver, logged_in_user):
     except Exception as e:
         print('Ошибка:', e)
         raise
-
 '''

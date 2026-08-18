@@ -23,6 +23,7 @@ def driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     driver = webdriver.Chrome(options=options) 
+
     yield driver
     driver.quit()
 

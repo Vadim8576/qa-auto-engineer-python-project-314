@@ -33,6 +33,10 @@ class BasePage:
     def text_of(self, locator):
         el = self.wait.until(EC.visibility_of_element_located(locator))
         return el.text
+    
+    def value_of(self, locator):
+        el = self.wait.until(EC.visibility_of_element_located(locator))
+        return el.get_attribute('value')
 
     def header_text(self):
         return self.text_of(self.HEADER)
