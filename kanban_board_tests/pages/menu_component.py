@@ -24,3 +24,4 @@ class Menu(BasePage):
         raise ValueError(
             f'Menu item "{page_name}" not found'
         )
+        

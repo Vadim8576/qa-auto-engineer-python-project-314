@@ -96,7 +96,7 @@ def test_users_table_is_visibility(driver, logged_in_user):
         logger.info('All required fields are present and non-empty')
 
 
-def test_edit_user_success(driver, logged_in_user, base_url):
+def test_edit_user_success(driver, logged_in_user):
     USER_ID = '7'
     
     menu = Menu(driver)
@@ -104,17 +104,75 @@ def test_edit_user_success(driver, logged_in_user, base_url):
     logger.info(f'Go to Users page')
        
     users_page = UsersPage(driver)     
-    editing_user = users_page.edit_user_by_id(USER_ID)
-    logger.info(f'Click to user with ID {USER_ID}: {editing_user['email']} {editing_user['first_name']} {editing_user['last_name']}')
+    selected_user = users_page.edit_user_by_id(USER_ID)
+    logger.info(f'Click to user with ID {USER_ID}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
 
     edit_user_page = EditUserPage(driver)
     assert edit_user_page.is_opened(USER_ID), f'Expected edit page for user {USER_ID}, but condition is False'
     logger.info(f'Open edit page user {USER_ID}')
     
-    assert f'User {editing_user['email']}' in edit_user_page.header_text(), f'This is not an edit page {editing_user['email']}'
+    assert f'User {selected_user['email']}' in edit_user_page.header_text(), f'This is not an edit page {selected_user['email']}'
 
+
+    # Проверка на совпадение данных из формы с данными редактируемого пользователя
+    user_from_form = edit_user_page.get_editing_user_data()
+    assert user_from_form == selected_user, f'selected for editing {selected_user['email']}, and the current user {user_from_form['email']}'
+    logger.info(f'User data matches')
     
     
-    # driver.save_screenshot("after_open.png")
+# Проверка на что измененные данные сохраняются
+def test_new_user_data_saved_success(driver, logged_in_user):
+    new_user_data = {
+        'email': 'new@mail.com',
+        'first_name': 'new_first_name',
+        'last_name': 'new_last_name',
+    }
     
     
+    USER_ID = '7'
+    
+    menu = Menu(driver)
+    menu.go_to('Users')
+    logger.info(f'Go to Users page')
+       
+    users_page = UsersPage(driver)     
+    selected_user = users_page.edit_user_by_id(USER_ID) #Получение данных пользователя из таблицы, на которго нажали, так же переход на редактирование
+    logger.info(selected_user)
+    logger.info(f'Click to user with ID {USER_ID}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
+    logger.info(f'Press on user {USER_ID}')
+    logger.info(users_page.current_url)
+    
+    edit_user_page = EditUserPage(driver)
+    edit_user_page.set_user_data(new_user_data) # ВВод новых данных и нажатие "сохранить", после чего редирект на /users
+
+    logger.info(users_page.current_url)
+    
+
+  
+    
+    
+    assert selected_user2 == new_user_data, f'selected for editing {selected_user2}, and the current user {new_user_data}'
+    logger.info(f'Update user data success')
+    
+    
+    
+    
+
+
+
+'''    
+<div role="presentation" class="MuiSnackbar-root MuiSnackbar-anchorOriginBottomCenter css-cwrgbr">
+    <div class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation6 MuiSnackbarContent-root css-1rp6o9q" role="alert" direction="up" style="opacity: 1; transform: none; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1);">
+        <div class="MuiSnackbarContent-message css-1w0ym84">
+            Element updated
+        </div>
+        <div class="MuiSnackbarContent-action css-zykra6">
+            <button class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary RaNotification-undo css-1rtnrqa" tabindex="0" type="button">
+                Undo
+                <span class="MuiTouchRipple-root css-w0pj6f">
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+'''
