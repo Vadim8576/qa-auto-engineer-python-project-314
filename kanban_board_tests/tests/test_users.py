@@ -39,18 +39,15 @@ def test_creation_user(driver, logged_in_user):
         'last_name': 'Alison'
     }
         
-    logger.info(f'Enter email {USER['email']}')
+    logger.info('Start enter user data')
     user_creation.type_email(USER['email'])
-    logger.info('Enter email complite')
-    logger.info(f'Enter first name {USER['first_name']}')
     user_creation.type_first_name(USER['first_name'])
-    logger.info('Enter first name complite')
-    logger.info(f'Enter last name {USER['last_name']}')
     user_creation.type_last_name(USER['last_name'])
-    logger.info('Enter last name complite')
+    logger.info('Finish enter user data')
     user_creation.save_user()
     logger.info('User saved')  
-                
+
+
     menu.go_to('Users')
     logger.info('Go to Users page')
         
@@ -59,16 +56,12 @@ def test_creation_user(driver, logged_in_user):
 
 
 def test_users_table_is_visibility(driver, logged_in_user):
-
     users_page = UsersPage(driver)
     assert users_page.users_table_loads(), 'Users table not loaded!'
 
     parsed_users = users_page.user_table_parse()
     assert len(parsed_users) > 0, 'User not found!'
     logger.info('Users table loaded')
-
-
-
 
     missing_issues = []
 
@@ -104,83 +97,24 @@ def test_users_table_is_visibility(driver, logged_in_user):
 
 
 def test_edit_user_success(driver, logged_in_user, base_url):
+    USER_ID = '7'
     
     menu = Menu(driver)
     menu.go_to('Users')
     logger.info(f'Go to Users page')
        
-    users_page = UsersPage(driver)
+    users_page = UsersPage(driver)     
+    editing_user = users_page.edit_user_by_id(USER_ID)
+    logger.info(f'Click to user with ID {USER_ID}: {editing_user['email']} {editing_user['first_name']} {editing_user['last_name']}')
 
-    parsed_users = users_page.user_table_parse()
-    # logger.info(parsed_users)
-    
-    
-    
-    
     edit_user_page = EditUserPage(driver)
-    USER_ID = '1'
-    
-    logger.info(f'Edit user (ID = {USER_ID})')
-    
-    
-    
-    
-    
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    edit_user_page.edit_user_by_id(base_url, USER_ID)
-    
-    
-    
-    assert edit_user_page.is_editing(USER_ID), f'Expected edit page for user {USER_ID}, but condition is False'
+    assert edit_user_page.is_opened(USER_ID), f'Expected edit page for user {USER_ID}, but condition is False'
     logger.info(f'Open edit page user {USER_ID}')
     
-    
-    
-    
-    
-    logger.info(f'Страница {users_page.current_url}')
-    
-    
+    assert f'User {editing_user['email']}' in edit_user_page.header_text(), f'This is not an edit page {editing_user['email']}'
+
     
     
     # driver.save_screenshot("after_open.png")
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    assert 'User john@google.com' in edit_user_page.header_text()
-    logger.info(f'User john@google.com')
-
-    
-    
-    elements = driver.find_elements(By.CSS_SELECTOR, 'input[name="email"]')
-    logger.info("Найдено input[name='email']: %d", len(elements))
-    
-    
-    logger.info(f'Get editing user data')
-    editing_user_data = users_page.get_editing_user_data()
-    logger.info(f'Data received')
-    
-    editing_user_data['id'] = USER_ID
-    
-    
-    
-    
-    logger.info(parsed_users)
-    
-    filtered_users = list(
-        filter(lambda u: str(u.get('id')) == USER_ID, parsed_users)
-    )
-    
-    assert filtered_users[0] == editing_user_data
-    
     
     

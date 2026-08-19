@@ -10,15 +10,8 @@ class EditUserPage(BasePage):
     LAST_NAME = (By.CSS_SELECTOR, 'input[name="lastName"]')
     SAVE = (By.CSS_SELECTOR, 'button[aria-label="Save"]')
     
-    # def is_opened(self):
-    #     return '/users' in self.current_url
-    
-    def is_editing(self, user_id):
+    def is_opened(self, user_id):
         return f'/users/{user_id}' in self.current_url
-
-    def edit_user_by_id(self, base_url, user_id):
-        # self.open(f'{base_url}/users/{user_id}')
-        
     
     def get_editing_user_data(self):
         email = self.value_of(self.EMAIL)

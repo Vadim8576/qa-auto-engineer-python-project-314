@@ -14,8 +14,10 @@ class UsersPage(BasePage):
     def is_opened(self):
         return '/users' in self.current_url
 
+
     def create_user(self):
         self.click(self.CREATE_BUTTON)
+
 
     def user_table_parse(self):
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
@@ -36,6 +38,7 @@ class UsersPage(BasePage):
             })
         return parsed_data
     
+    
     def is_user_added(self, user):
         parsed_users = self.user_table_parse()
         return any(
@@ -44,6 +47,7 @@ class UsersPage(BasePage):
             and pu['last_name'] == user['last_name']
             for pu in parsed_users
         )
+    
     
     def users_table_loads(self):
         try:
@@ -55,3 +59,22 @@ class UsersPage(BasePage):
             return False
 
 
+    def edit_user_by_id(self, user_id):
+        users = self.user_table_parse()
+        
+        table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
+        rows = table.find_elements(*self.ROWS)
+
+        for row in rows:
+            cells = row.find_elements(*self.CELL)
+            row_data = [cell.text.strip() for cell in cells]
+            row_user_id, email, first_name, last_name, _ = row_data[1:6]
+            if row_user_id == user_id:
+                row.click()
+                return {
+                    'email': email,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                }
+                
+            
