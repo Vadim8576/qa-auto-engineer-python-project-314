@@ -6,6 +6,7 @@ from kanban_board_tests.pages.base_page import BasePage
 
 import logging
 
+import re
 
 import time
 
@@ -13,7 +14,9 @@ import time
 logger = logging.getLogger(__name__)
 
 class EditUserPage(BasePage):  
+    EMAIL_REGEX = re.compile(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
     EMAIL = (By.CSS_SELECTOR, 'input[name="email"]')
+    EMAIL_INCORRECT_MESSAGE = (By.ID, ':r4:-helper-text')
     FIRST_NAME = (By.CSS_SELECTOR, 'input[name="firstName"]')
     LAST_NAME = (By.CSS_SELECTOR, 'input[name="lastName"]')
     SAVE = (By.CSS_SELECTOR, 'button[type="submit"]')
@@ -37,3 +40,7 @@ class EditUserPage(BasePage):
         self.type(self.LAST_NAME, new_user_data['last_name'])
         time.sleep(1)
         self.click(self.SAVE)
+    
+    def is_valid_email(self, email):
+        email = self.text_of(self.EMAIL_INCORRECT_MESSAGE)
+        return email is not 'Incorrect email format'

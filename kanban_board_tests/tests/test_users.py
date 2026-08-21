@@ -146,6 +146,52 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    # Сейчас неверная логика проверки валидации!!!
+    # Нужно вводить неверные email и проверять сообщение self.text_of(self.EMAIL_INCORRECT_MESSAGE)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+def test_email_validation(driver, logged_in_user):
+    USER_ID = '3'
+    EMAILS = {
+        'correct': 'aaa@bbb.cc',
+        'incorrect': ['@bbb.cc', 'aaa@', 'aaa@bbb', 'aaa']
+    }
+    
+    menu = Menu(driver)
+    menu.go_to('Users')
+    logger.info(f'Go to Users page')
+         
+    users_page = UsersPage(driver) 
+    
+    # Выбор пользователя для редактирования
+    users_page.click_on_user(USER_ID)
+    
+    edit_user_page = EditUserPage(driver)
+     
+    # Проверка валидации email
+    logger.info(f'email validation check')
+    
+    assert edit_user_page.is_valid_email(EMAILS['correct']), f'The correct email was not validated: {email}'
+    
+    for email in EMAILS['incorrect']:
+        assert edit_user_page.is_valid_email(email), f'Invalid email validated: {email}'
 
 
 
