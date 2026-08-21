@@ -59,7 +59,7 @@ class UsersPage(BasePage):
             return False
 
 
-    def edit_user_by_id(self, user_id):
+    def click_on_user(self, user_id):
         users = self.user_table_parse()
         
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))

@@ -7,6 +7,9 @@ from kanban_board_tests.pages.base_page import BasePage
 import logging
 
 
+import time
+
+
 logger = logging.getLogger(__name__)
 
 class EditUserPage(BasePage):  
@@ -32,4 +35,5 @@ class EditUserPage(BasePage):
         self.type(self.EMAIL, new_user_data['email'])
         self.type(self.FIRST_NAME, new_user_data['first_name'])
         self.type(self.LAST_NAME, new_user_data['last_name'])
+        time.sleep(1)
         self.click(self.SAVE)

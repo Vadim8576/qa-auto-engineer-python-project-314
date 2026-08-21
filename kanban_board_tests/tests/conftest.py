@@ -17,7 +17,7 @@ def base_url():
 def driver():
     options = Options()
     options.add_argument("--window-size=1366,768")
-    options.add_argument("--headless=new")          # без окна
+    # options.add_argument("--headless=new")          # без окна
     options.add_argument("--disable-notifications")
     options.add_argument("--no-sandbox")            # важно в контейнерах/WSL
     options.add_argument("--disable-dev-shm-usage")

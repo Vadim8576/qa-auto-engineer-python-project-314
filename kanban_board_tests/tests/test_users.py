@@ -26,26 +26,18 @@ def test_creation_user(driver, logged_in_user):
     users_page.create_user()
     logger.info('Button "Create user" pressed')
         
-        
     user_creation = UserCreationPage(driver)
     user_creation.is_opened()
     assert 'Create User' in user_creation.header_text()
-            
-    # Заполнение формы
-        
+                
     USER = {
         'email': 'kate@mail.com',
         'first_name': 'Kate',
         'last_name': 'Alison'
     }
         
-    logger.info('Start enter user data')
-    user_creation.type_email(USER['email'])
-    user_creation.type_first_name(USER['first_name'])
-    user_creation.type_last_name(USER['last_name'])
-    logger.info('Finish enter user data')
-    user_creation.save_user()
-    logger.info('User saved')  
+    user_creation.create_user(USER)
+    logger.info(f'Create user {USER['first_name']}')
 
 
     menu.go_to('Users')
@@ -104,7 +96,7 @@ def test_edit_user_success(driver, logged_in_user):
     logger.info(f'Go to Users page')
        
     users_page = UsersPage(driver)     
-    selected_user = users_page.edit_user_by_id(USER_ID)
+    selected_user = users_page.click_on_user(USER_ID)
     logger.info(f'Click to user with ID {USER_ID}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
 
     edit_user_page = EditUserPage(driver)
@@ -128,7 +120,6 @@ def test_new_user_data_saved_success(driver, logged_in_user):
         'last_name': 'new_last_name',
     }
     
-    
     USER_ID = '7'
     
     menu = Menu(driver)
@@ -136,22 +127,20 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     logger.info(f'Go to Users page')
        
     users_page = UsersPage(driver)     
-    selected_user = users_page.edit_user_by_id(USER_ID) #Получение данных пользователя из таблицы, на которго нажали, так же переход на редактирование
-    logger.info(selected_user)
-    logger.info(f'Click to user with ID {USER_ID}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
-    logger.info(f'Press on user {USER_ID}')
-    logger.info(users_page.current_url)
-    
     edit_user_page = EditUserPage(driver)
-    edit_user_page.set_user_data(new_user_data) # ВВод новых данных и нажатие "сохранить", после чего редирект на /users
-
-    logger.info(users_page.current_url)
     
-
-  
+    # Получение данных пользователя из таблицы, на которго нажали, так же переход на редактирование
+    user_data = users_page.click_on_user(USER_ID)
     
+    logger.info(f'Click to user with ID {USER_ID}: {user_data['email']} {user_data['first_name']} {user_data['last_name']}')
     
-    assert selected_user2 == new_user_data, f'selected for editing {selected_user2}, and the current user {new_user_data}'
+    # Ввод новых данных и нажатие "сохранить"
+    edit_user_page.set_user_data(new_user_data)
+    
+    # Получаем данные этого же пользователя из таблицы, для проверки, что данные сохранились
+    user_data = users_page.click_on_user(USER_ID)
+    
+    assert user_data == new_user_data, f'selected for editing {user_data}, and the current user {new_user_data}'
     logger.info(f'Update user data success')
     
     

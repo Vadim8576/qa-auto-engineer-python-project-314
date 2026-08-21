@@ -1,7 +1,13 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 
+
+import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 class BasePage:
     HEADER = (By.ID, 'react-admin-title')
@@ -27,8 +33,15 @@ class BasePage:
 
     def type(self, locator, text):
         el = self.wait.until(EC.visibility_of_element_located(locator))
-        el.clear()
+        
+        el.send_keys(Keys.CONTROL, "a")
+        # time.sleep(1)
+        el.send_keys(Keys.DELETE)
+        # time.sleep(1)
         el.send_keys(text)
+        self.wait.until(lambda driver: el.get_attribute("value") == text)
+        # time.sleep(1)
+    
 
     def text_of(self, locator):
         el = self.wait.until(EC.visibility_of_element_located(locator))
