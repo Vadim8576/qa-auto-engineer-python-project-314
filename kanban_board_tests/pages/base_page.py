@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class BasePage:
     HEADER = (By.ID, 'react-admin-title')
+    ALERT = (By.CSS_SELECTOR, 'div[role="alert"] div[class*="message"]')
         
     def __init__(self, driver):
         self.driver = driver
@@ -51,3 +52,15 @@ class BasePage:
 
     def header_text(self):
         return self.text_of(self.HEADER)
+    
+    def wait_alert_invisibility(self):
+        """Ждёт, пока существующий алерт исчезнет (станет невидимым или уйдёт из DOM)."""
+        try:
+            self.wait.until(EC.invisibility_of_element_located(self.ALERT))
+        except Exception:
+            pass
+    
+    def get_alert_text(self):
+        text = self.text_of(self.ALERT)
+        self.wait_alert_invisibility()
+        return text

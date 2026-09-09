@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 class EditUserPage(BasePage):  
     EMAIL = (By.CSS_SELECTOR, 'input[name="email"]')
-    ALERT = (By.CSS_SELECTOR, 'div[role="alert"] div[class*="message"]')
     FIRST_NAME = (By.CSS_SELECTOR, 'input[name="firstName"]')
     LAST_NAME = (By.CSS_SELECTOR, 'input[name="lastName"]')
     SAVE = (By.CSS_SELECTOR, 'button[type="submit"]')
@@ -52,18 +51,11 @@ class EditUserPage(BasePage):
         # time.sleep(1)
         self.click_save()
     
-    def wait_alert_invisibility(self):
-        """Ждёт, пока существующий алерт исчезнет (станет невидимым или уйдёт из DOM)."""
-        try:
-            self.wait.until(EC.invisibility_of_element_located(self.ALERT))
-        except Exception:
-            pass
+    
     
     def is_email_incorrect(self):
-        # self.wait_alert_disappear()
         try:           
-            text = self.text_of(self.ALERT)
-            self.wait_alert_invisibility()
+            text = self.get_alert_text()
             return 'The form is not valid' in text
         except Exception:
             return False

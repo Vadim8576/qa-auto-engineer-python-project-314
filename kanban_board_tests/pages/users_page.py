@@ -12,11 +12,13 @@ logger = logging.getLogger(__name__)
 class UsersPage(BasePage):
     CREATE_BUTTON = (By.CSS_SELECTOR, 'a[aria-label="Create"]')
     DELETE_BUTTON = (By.CSS_SELECTOR, 'button[aria-label="Delete"]')
+    TABLE_HEAD = (By.TAG_NAME, 'thead')
     TABLE = (By.TAG_NAME, 'tbody')
-    ROWS = (By.TAG_NAME, 'tr')
+    ROW = (By.TAG_NAME, 'tr')
     CELL = (By.TAG_NAME, 'td')
     CHECKBOX = (By.CSS_SELECTOR, 'input[type="checkbox"]')
     DATA_ROWS = (By.CSS_SELECTOR, 'tbody tr')
+    NO_USERS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Users yet')]")
     
     def is_opened(self):
         return '/users' in self.current_url
@@ -30,7 +32,7 @@ class UsersPage(BasePage):
 
     def user_table_parse(self):
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
-        rows = table.find_elements(*self.ROWS)
+        rows = table.find_elements(*self.ROW)
 
         parsed_data = []
         for row in rows:
@@ -75,11 +77,10 @@ class UsersPage(BasePage):
             return False
 
 
-    def click_on_user(self, user_id):
-        users = self.user_table_parse()
-        
+
+    def click_on_user(self, user_id):       
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
-        rows = table.find_elements(*self.ROWS)
+        rows = table.find_elements(*self.ROW)
 
         for row in rows:
             cells = row.find_elements(*self.CELL)
@@ -93,11 +94,9 @@ class UsersPage(BasePage):
                     'last_name': last_name,
                 }
     
-    def click_on_checkbox(self, user_id):
-        users = self.user_table_parse()
-        
+    def select_user(self, user_id):
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
-        rows = table.find_elements(*self.ROWS)
+        rows = table.find_elements(*self.ROW)
 
         for row in rows:
             cells = row.find_elements(*self.CELL)         
@@ -115,5 +114,13 @@ class UsersPage(BasePage):
                     'last_name': last_name,
                 }
                 
-                
-            
+    def select_all_users(self):        
+        table_head = self.wait.until(EC.visibility_of_element_located(self.TABLE_HEAD))
+        head = table_head.find_element(*self.ROW)
+        checkbox = head.find_element(*self.CHECKBOX)
+        checkbox.click()
+    
+    def users_is_missing(self):
+        elements = self.driver.find_elements(*self.NO_USERS_MESSAGE)
+        return len(elements) > 0
+        

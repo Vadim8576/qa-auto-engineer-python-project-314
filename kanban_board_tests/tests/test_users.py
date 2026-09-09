@@ -198,9 +198,13 @@ def test_remove_user_successful(driver, logged_in_user):
     users_before_deletion_count = len(users_before_deletion)
     logger.info(f'Users in the table before deletion: {users_before_deletion_count}')
     
+    # Если таблица пуста, пропускаем тест
+    if users_before_deletion_count == 0:
+        pytest.skip("Cannot run test: no users available in the table.")
+      
     user_id = users_page.get_random_user_id()
     # Получаем данные выделенного пользователя
-    selected_user = users_page.click_on_checkbox(user_id)
+    selected_user = users_page.select_user(user_id)
     logger.info(f'Select user with ID = {user_id}')
     
     # Удаляем выделенного пользователя
@@ -223,3 +227,26 @@ def test_remove_user_successful(driver, logged_in_user):
     ), 'The user has been deleted but still appears in the table.'
     
     logger.info('The user has been successfully removed from the table.')
+
+
+def test_remove_all_user_successful(driver, logged_in_user):
+    menu = Menu(driver)
+    menu.go_to('Users')
+    logger.info(f'Go to Users page')
+      
+    users_page = UsersPage(driver)
+    users = users_page.user_table_parse()
+    users_count = len(users)
+    
+    users_page.select_all_users()
+    logger.info(f'Select all users in the table.')
+    
+    # Удаляем выделенных пользователей
+    users_page.click_to_delete()
+    logger.info('Click to "Delete"')
+      
+    assert f'{users_count} elements deleted' in users_page.get_alert_text() 
+    assert users_page.users_is_missing(), 'The "No Users yet" message is missing. Perhaps not all users have been deleted.'
+    logger.info('All users have been successfully deleted.')
+    
+    
