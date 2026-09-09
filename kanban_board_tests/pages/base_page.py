@@ -14,7 +14,7 @@ class BasePage:
         
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(driver, 10)
 
     def open(self, url):
         self.driver.get(url)
@@ -28,19 +28,17 @@ class BasePage:
         return self.driver.current_url
 
     def click(self, locator):
-        el = self.wait.until(EC.element_to_be_clickable(locator))
+        # el = self.wait.until(EC.element_to_be_clickable(locator))
+        el = self.wait.until(EC.presence_of_element_located(locator))
         el.click()
 
     def type(self, locator, text):
         el = self.wait.until(EC.visibility_of_element_located(locator))
-        
-        el.send_keys(Keys.CONTROL, "a")
-        # time.sleep(1)
+           
+        el.send_keys(Keys.CONTROL, 'a')
         el.send_keys(Keys.DELETE)
-        # time.sleep(1)
         el.send_keys(text)
-        self.wait.until(lambda driver: el.get_attribute("value") == text)
-        # time.sleep(1)
+        self.wait.until(lambda driver: el.get_attribute('value') == text)
     
 
     def text_of(self, locator):

@@ -14,9 +14,8 @@ import time
 logger = logging.getLogger(__name__)
 
 class EditUserPage(BasePage):  
-    EMAIL_REGEX = re.compile(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
     EMAIL = (By.CSS_SELECTOR, 'input[name="email"]')
-    EMAIL_INCORRECT_MESSAGE = (By.ID, ':r4:-helper-text')
+    ALERT = (By.CSS_SELECTOR, 'div[role="alert"] div[class*="message"]')
     FIRST_NAME = (By.CSS_SELECTOR, 'input[name="firstName"]')
     LAST_NAME = (By.CSS_SELECTOR, 'input[name="lastName"]')
     SAVE = (By.CSS_SELECTOR, 'button[type="submit"]')
@@ -33,14 +32,38 @@ class EditUserPage(BasePage):
             'first_name': first_name,
             'last_name': last_name
         }
+        
+    def set_user_email(self, email):
+        self.type(self.EMAIL, email)
     
-    def set_user_data(self, new_user_data):
-        self.type(self.EMAIL, new_user_data['email'])
-        self.type(self.FIRST_NAME, new_user_data['first_name'])
-        self.type(self.LAST_NAME, new_user_data['last_name'])
-        time.sleep(1)
+    def set_user_first_name(self, first_name):
+        self.type(self.FIRST_NAME, first_name)
+    
+    def set_user_last_name(self, last_name):
+        self.type(self.LAST_NAME, last_name)
+    
+    def click_save(self):
         self.click(self.SAVE)
+        
+    def set_user_data(self, new_user_data):
+        self.set_user_email(new_user_data['email'])
+        self.set_user_first_name(new_user_data['first_name'])
+        self.set_user_last_name(new_user_data['last_name'])
+        # time.sleep(1)
+        self.click_save()
     
-    def is_valid_email(self, email):
-        email = self.text_of(self.EMAIL_INCORRECT_MESSAGE)
-        return email is not 'Incorrect email format'
+    def wait_alert_invisibility(self):
+        """Ждёт, пока существующий алерт исчезнет (станет невидимым или уйдёт из DOM)."""
+        try:
+            self.wait.until(EC.invisibility_of_element_located(self.ALERT))
+        except Exception:
+            pass
+    
+    def is_email_incorrect(self):
+        # self.wait_alert_disappear()
+        try:           
+            text = self.text_of(self.ALERT)
+            self.wait_alert_invisibility()
+            return 'The form is not valid' in text
+        except Exception:
+            return False

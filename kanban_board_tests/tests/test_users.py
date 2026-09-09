@@ -129,7 +129,7 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     users_page = UsersPage(driver)     
     edit_user_page = EditUserPage(driver)
     
-    # Получение данных пользователя из таблицы, на которго нажали, так же переход на редактирование
+    # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
     user_data = users_page.click_on_user(USER_ID)
     
     logger.info(f'Click to user with ID {USER_ID}: {user_data['email']} {user_data['first_name']} {user_data['last_name']}')
@@ -146,27 +146,12 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     
     
     
-    
-    
-    
-    
-    
-    
-    
     # Сейчас неверная логика проверки валидации!!!
     # Нужно вводить неверные email и проверять сообщение self.text_of(self.EMAIL_INCORRECT_MESSAGE)
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+     
+
 def test_email_validation(driver, logged_in_user):
     USER_ID = '3'
     EMAILS = {
@@ -177,21 +162,28 @@ def test_email_validation(driver, logged_in_user):
     menu = Menu(driver)
     menu.go_to('Users')
     logger.info(f'Go to Users page')
-         
-    users_page = UsersPage(driver) 
+      
+    users_page = UsersPage(driver)
     
     # Выбор пользователя для редактирования
     users_page.click_on_user(USER_ID)
     
     edit_user_page = EditUserPage(driver)
+    logger.info(edit_user_page.current_url)
      
-    # Проверка валидации email
     logger.info(f'email validation check')
     
-    assert edit_user_page.is_valid_email(EMAILS['correct']), f'The correct email was not validated: {email}'
-    
-    for email in EMAILS['incorrect']:
-        assert edit_user_page.is_valid_email(email), f'Invalid email validated: {email}'
+    for incorrect_email in EMAILS['incorrect']:     
+        logger.info(f'Input email: {incorrect_email}')
+
+        edit_user_page.set_user_email(incorrect_email)    
+        edit_user_page.click_save()
+        
+        is_email_incorrect = edit_user_page.is_email_incorrect()
+        
+        assert is_email_incorrect, f'The email check was expected to fail, but it passed: {incorrect_email}'
+
+
 
 
 
