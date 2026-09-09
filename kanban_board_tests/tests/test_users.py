@@ -6,7 +6,6 @@ from kanban_board_tests.pages.edit_user_page import EditUserPage
 from kanban_board_tests.pages.dashboard_page import DashboardPage
 from kanban_board_tests.pages.user_creation_page import UserCreationPage
 from kanban_board_tests.pages.menu_component import Menu
-import kanban_board_tests.utils.actions_on_users as actions_on_users
 from kanban_board_tests.data.emails import INCORRECT_EMAILS
 from kanban_board_tests.data.users import USERS_DATA
 
@@ -185,3 +184,42 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
         
     assert edit_user_page.is_email_incorrect(), f'The email check was expected to fail, but it passed: {incorrect_email}'
     logger.info(f'Invalid email failed validation.')
+
+
+def test_remove_user_successful(driver, logged_in_user):  
+    menu = Menu(driver)
+    menu.go_to('Users')
+    logger.info(f'Go to Users page')
+      
+    users_page = UsersPage(driver)
+    
+    # Парсим таблицу
+    users_before_deletion = users_page.user_table_parse()
+    users_before_deletion_count = len(users_before_deletion)
+    logger.info(f'Users in the table before deletion: {users_before_deletion_count}')
+    
+    user_id = users_page.get_random_user_id()
+    # Получаем данные выделенного пользователя
+    selected_user = users_page.click_on_checkbox(user_id)
+    logger.info(f'Select user with ID = {user_id}')
+    
+    # Удаляем выделенного пользователя
+    users_page.click_to_delete()
+    logger.info(f'Click to "Delete"')
+    
+    # Снова парсим таблицу
+    users_after_deletion = users_page.user_table_parse()
+    users_after_deletion_count = len(users_after_deletion)
+    logger.info(f'Users in the table after deletion: {users_after_deletion_count}')
+    
+    assert (users_before_deletion_count - 1) == users_after_deletion_count, 'The number of users in the table does not match.'
+    
+    # Проверяем, что удаленный пользователь отсутствует в таблице
+    assert not any(
+        u['email'] == selected_user['email']
+        and u['first_name'] == selected_user['first_name']
+        and u['last_name'] == selected_user['last_name']
+        for u in users_after_deletion
+    ), 'The user has been deleted but still appears in the table.'
+    
+    logger.info('The user has been successfully removed from the table.')
