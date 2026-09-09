@@ -1,0 +1,1 @@
+INCORRECT_EMAILS = ['@bbb.cc', 'aaa@', 'aaa@bbb', 'aaa']

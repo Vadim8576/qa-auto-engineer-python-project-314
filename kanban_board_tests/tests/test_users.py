@@ -1,3 +1,4 @@
+import pytest
 import logging
 
 from kanban_board_tests.pages.users_page import UsersPage
@@ -5,6 +6,7 @@ from kanban_board_tests.pages.edit_user_page import EditUserPage
 from kanban_board_tests.pages.dashboard_page import DashboardPage
 from kanban_board_tests.pages.user_creation_page import UserCreationPage
 from kanban_board_tests.pages.menu_component import Menu
+from kanban_board_tests.data.emails import INCORRECT_EMAILS
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -112,7 +114,7 @@ def test_edit_user_success(driver, logged_in_user):
     logger.info(f'User data matches')
     
     
-# Проверка на что измененные данные сохраняются
+# Проверка, что измененные данные сохраняются
 def test_new_user_data_saved_success(driver, logged_in_user):
     new_user_data = {
         'email': 'new@mail.com',
@@ -143,21 +145,10 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     assert user_data == new_user_data, f'selected for editing {user_data}, and the current user {new_user_data}'
     logger.info(f'Update user data success')
     
-    
-    
-    
-    # Сейчас неверная логика проверки валидации!!!
-    # Нужно вводить неверные email и проверять сообщение self.text_of(self.EMAIL_INCORRECT_MESSAGE)
-    
-    
      
-
-def test_email_validation(driver, logged_in_user):
+@pytest.mark.parametrize('incorrect_email', INCORRECT_EMAILS)
+def test_email_validation(driver, logged_in_user, incorrect_email):
     USER_ID = '3'
-    EMAILS = {
-        'correct': 'aaa@bbb.cc',
-        'incorrect': ['@bbb.cc', 'aaa@', 'aaa@bbb', 'aaa']
-    }
     
     menu = Menu(driver)
     menu.go_to('Users')
@@ -172,34 +163,14 @@ def test_email_validation(driver, logged_in_user):
     logger.info(edit_user_page.current_url)
      
     logger.info(f'email validation check')
+          
+    logger.info(f'Input email: {incorrect_email}')
+
+    edit_user_page.set_user_email(incorrect_email)
+    email_from_form = edit_user_page.get_editing_user_data()['email']
     
-    for incorrect_email in EMAILS['incorrect']:     
-        logger.info(f'Input email: {incorrect_email}')
-
-        edit_user_page.set_user_email(incorrect_email)    
-        edit_user_page.click_save()
+    assert email_from_form == incorrect_email, f'Expected {incorrect_email} in the email field, not {email_from_form}.'
+    
+    edit_user_page.click_save()
         
-        is_email_incorrect = edit_user_page.is_email_incorrect()
-        
-        assert is_email_incorrect, f'The email check was expected to fail, but it passed: {incorrect_email}'
-
-
-
-
-
-'''    
-<div role="presentation" class="MuiSnackbar-root MuiSnackbar-anchorOriginBottomCenter css-cwrgbr">
-    <div class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation6 MuiSnackbarContent-root css-1rp6o9q" role="alert" direction="up" style="opacity: 1; transform: none; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1);">
-        <div class="MuiSnackbarContent-message css-1w0ym84">
-            Element updated
-        </div>
-        <div class="MuiSnackbarContent-action css-zykra6">
-            <button class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary RaNotification-undo css-1rtnrqa" tabindex="0" type="button">
-                Undo
-                <span class="MuiTouchRipple-root css-w0pj6f">
-                </span>
-            </button>
-        </div>
-    </div>
-</div>
-'''
+    assert edit_user_page.is_email_incorrect(), f'The email check was expected to fail, but it passed: {incorrect_email}'
