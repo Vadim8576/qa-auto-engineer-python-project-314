@@ -13,7 +13,7 @@ class UserCreationPage(BasePage):
     def is_opened(self):
         return '/users/create' in self.current_url
         
-    def create_user(self, user_data):
+    def create(self, user_data):
         self.type(self.EMAIL, user_data['email'])
         self.type(self.FIRST_NAME, user_data['first_name'])
         self.type(self.LAST_NAME, user_data['last_name'])

@@ -5,20 +5,22 @@ import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
-from kanban_board_tests.pages.base_page import BasePage
+from kanban_board_tests.pages.users_page import UsersPage
 
 logger = logging.getLogger(__name__)
 
-class UsersPage(BasePage):
-    CREATE_BUTTON = (By.CSS_SELECTOR, 'a[aria-label="Create"]')
-    DELETE_BUTTON = (By.CSS_SELECTOR, 'button[aria-label="Delete"]')
+class TaskStatusesPage(UsersPage):
     TABLE_HEAD = (By.TAG_NAME, 'thead')
     TABLE = (By.TAG_NAME, 'tbody')
+    DATA_ROWS = (By.CSS_SELECTOR, 'tbody tr')
     ROW = (By.TAG_NAME, 'tr')
     CELL = (By.TAG_NAME, 'td')
+    
+    CREATE_BUTTON = (By.CSS_SELECTOR, 'a[aria-label="Create"]')
+    DELETE_BUTTON = (By.CSS_SELECTOR, 'button[aria-label="Delete"]')
     CHECKBOX = (By.CSS_SELECTOR, 'input[type="checkbox"]')
-    DATA_ROWS = (By.CSS_SELECTOR, 'tbody tr')
-    NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Users yet')]")
+    
+    NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
     
     def click_to_create(self):
         self.click(self.CREATE_BUTTON)
@@ -58,7 +60,7 @@ class UsersPage(BasePage):
     
     
     def is_opened(self):
-        return '/users' in self.current_url
+        return '/task_statuses' in self.current_url
     
     def table_parse(self):
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
@@ -68,65 +70,57 @@ class UsersPage(BasePage):
         for row in rows:
             cells = row.find_elements(*self.CELL)
             row_data = [cell.text.strip() for cell in cells]
-            user_id, email, first_name, last_name, created_at = row_data[1:6]
+            status_id, name, slug, created_at = row_data[1:5]
             
             parsed_data.append({
-                'id': user_id,
-                'email': email,
-                'first_name': first_name,
-                'last_name': last_name,
+                'id': status_id,
+                'name': name,
+                'slug': slug,
                 'created_at': created_at
             })
         return parsed_data
-    
-    
-     
-    def is_record_added(self, user):
+      
+    def is_record_added(self, status):
         parsed_records = self.table_parse()
         return any(
-            r['email'] == user['email']
-            and r['first_name'] == user['first_name']
-            and r['last_name'] == user['last_name']
+            r['name'] == status['name']
+            and r['slug'] == status['slug']
             for r in parsed_records
         )
     
-    
-
-    def click_on_record(self, user_id):       
+    def click_on_record(self, status_id):       
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
         rows = table.find_elements(*self.ROW)
 
         for row in rows:
             cells = row.find_elements(*self.CELL)
             row_data = [cell.text.strip() for cell in cells]
-            row_user_id, email, first_name, last_name, _ = row_data[1:]
-            if row_user_id == user_id:
+            row_status_id, name, slug, _ = row_data[1:]
+            if row_status_id == status_id:
                 row.click()
                 return {
-                    'email': email,
-                    'first_name': first_name,
-                    'last_name': last_name,
+                    'name': name,
+                    'slug': slug
                 }
     
-    def select_record(self, user_id):
+    def select_record(self, status_id):
         table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
         rows = table.find_elements(*self.ROW)
 
         for row in rows:
             cells = row.find_elements(*self.CELL)         
             row_data = [cell.text.strip() for cell in cells]
-            row_user_id, email, first_name, last_name, _ = row_data[1:]
-            # row_user_id = row_data[1]
+            row_status_id, name, slug, _ = row_data[1:]
             
-            if row_user_id == user_id:
-                logger.info(f'Click on checkbox with ID = {user_id}')
+            if row_status_id == status_id:
+                logger.info(f'Click on checkbox with ID = {status_id}')
                 checkbox = row.find_element(*self.CHECKBOX)
                 checkbox.click()
                 return {
-                    'email': email,
-                    'first_name': first_name,
-                    'last_name': last_name,
+                    'name': name,
+                    'slug': slug,
                 }
                 
     
+        
         

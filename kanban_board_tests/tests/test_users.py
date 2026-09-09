@@ -16,20 +16,6 @@ logger = logging.getLogger(__name__)
 
 def test_creation_user(driver, logged_in_user):
 
-    # dashboard = DashboardPage(driver)
-    # assert dashboard.is_opened()
-    # assert 'Welcome to the administration' in dashboard.header_text()
-        
-    # menu = Menu(driver)
-    # menu.go_to('Users')
-    
-    # users_page = UsersPage(driver)
-        
-    # actions_on_users.create(driver, users_page, USERS_DATA[0])
-    # menu.go_to('Users')
-        
-        
-
     menu = Menu(driver)
     menu.go_to('Users')
         
@@ -42,34 +28,33 @@ def test_creation_user(driver, logged_in_user):
     user_creation = UserCreationPage(driver)
     user_creation.is_opened()
     assert 'Create User' in user_creation.header_text()
-     
               
     user = USERS_DATA[0]
         
-    user_creation.create_user(user)
+    user_creation.create(user)
     logger.info(f'Create user {user['first_name']}')
     
     menu.go_to('Users')
-    
-    
-    
+       
     logger.info('Go to Users page')
         
-    assert users_page.is_user_added(user), f'User {user['first_name']} not found'
+    assert users_page.is_record_added(user), f'User {user['first_name']} not found'
     logger.info(f'User {user['first_name']} added successfully!')
 
 
 def test_users_table_is_visibility(driver, logged_in_user):
+    menu = Menu(driver)
+    menu.go_to('Users')
     users_page = UsersPage(driver)
-    assert users_page.users_table_loads(), 'Users table not loaded!'
+    assert users_page.table_loads(), 'Users table not loaded!'
 
-    parsed_users = users_page.user_table_parse()
-    assert len(parsed_users) > 0, 'User not found!'
+    parsed_records = users_page.table_parse()
+    assert len(parsed_records) > 0, 'User not found!'
     logger.info('Users table loaded')
 
     missing_issues = []
 
-    for i, u in enumerate(parsed_users):
+    for i, u in enumerate(parsed_records):
         line_no = i + 1
         has_problem = False
 
@@ -106,7 +91,7 @@ def test_edit_user_success(driver, logged_in_user):
     menu.go_to('Users')
        
     users_page = UsersPage(driver)   
-    user_id = users_page.get_random_user_id()
+    user_id = users_page.get_random_id()
     
     
     if user_id is None:
@@ -114,7 +99,7 @@ def test_edit_user_success(driver, logged_in_user):
      
     logger.info(f'User with ID = {user_id}')
     
-    selected_user = users_page.click_on_user(user_id)
+    selected_user = users_page.click_on_record(user_id)
     logger.info(f'Click to user with ID {user_id}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
 
     edit_user_page = EditUserPage(driver)
@@ -140,10 +125,10 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     users_page = UsersPage(driver)     
     edit_user_page = EditUserPage(driver)
     
-    user_id = users_page.get_random_user_id()
+    user_id = users_page.get_random_id()
     
     # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
-    user_data = users_page.click_on_user(user_id)
+    user_data = users_page.click_on_record(user_id)
     
     logger.info(f'Click to user with ID {user_id}: {user_data['email']} {user_data['first_name']} {user_data['last_name']}')
     
@@ -151,7 +136,7 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     edit_user_page.set_user_data(new_user_data)
     
     # Получаем данные этого же пользователя из таблицы, для проверки, что данные сохранились
-    user_data = users_page.click_on_user(user_id)
+    user_data = users_page.click_on_record(user_id)
     
     assert user_data == new_user_data, f'selected for editing {user_data}, and the current user {new_user_data}'
     logger.info(f'Update user data success')
@@ -164,10 +149,10 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
     logger.info(f'Go to Users page')
       
     users_page = UsersPage(driver)
-    user_id = users_page.get_random_user_id()
+    user_id = users_page.get_random_id()
     
     # Выбор пользователя для редактирования
-    users_page.click_on_user(user_id)
+    users_page.click_on_record(user_id)
     
     edit_user_page = EditUserPage(driver)
     logger.info(edit_user_page.current_url)
@@ -194,7 +179,7 @@ def test_remove_user_successful(driver, logged_in_user):
     users_page = UsersPage(driver)
     
     # Парсим таблицу
-    users_before_deletion = users_page.user_table_parse()
+    users_before_deletion = users_page.table_parse()
     users_before_deletion_count = len(users_before_deletion)
     logger.info(f'Users in the table before deletion: {users_before_deletion_count}')
     
@@ -202,9 +187,9 @@ def test_remove_user_successful(driver, logged_in_user):
     if users_before_deletion_count == 0:
         pytest.skip("Cannot run test: no users available in the table.")
       
-    user_id = users_page.get_random_user_id()
+    user_id = users_page.get_random_id()
     # Получаем данные выделенного пользователя
-    selected_user = users_page.select_user(user_id)
+    selected_user = users_page.select_record(user_id)
     logger.info(f'Select user with ID = {user_id}')
     
     # Удаляем выделенного пользователя
@@ -212,7 +197,7 @@ def test_remove_user_successful(driver, logged_in_user):
     logger.info(f'Click to "Delete"')
     
     # Снова парсим таблицу
-    users_after_deletion = users_page.user_table_parse()
+    users_after_deletion = users_page.table_parse()
     users_after_deletion_count = len(users_after_deletion)
     logger.info(f'Users in the table after deletion: {users_after_deletion_count}')
     
@@ -229,16 +214,16 @@ def test_remove_user_successful(driver, logged_in_user):
     logger.info('The user has been successfully removed from the table.')
 
 
-def test_remove_all_user_successful(driver, logged_in_user):
+def test_remove_all_users_successful(driver, logged_in_user):
     menu = Menu(driver)
     menu.go_to('Users')
     logger.info(f'Go to Users page')
       
     users_page = UsersPage(driver)
-    users = users_page.user_table_parse()
+    users = users_page.table_parse()
     users_count = len(users)
     
-    users_page.select_all_users()
+    users_page.select_all_records()
     logger.info(f'Select all users in the table.')
     
     # Удаляем выделенных пользователей
@@ -246,7 +231,7 @@ def test_remove_all_user_successful(driver, logged_in_user):
     logger.info('Click to "Delete"')
       
     assert f'{users_count} elements deleted' in users_page.get_alert_text() 
-    assert users_page.users_is_missing(), 'The "No Users yet" message is missing. Perhaps not all users have been deleted.'
+    assert users_page.records_is_missing(), 'The "No Users yet" message is missing. Perhaps not all users have been deleted.'
     logger.info('All users have been successfully deleted.')
     
     
