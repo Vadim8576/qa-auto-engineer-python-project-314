@@ -23,7 +23,7 @@ class EditUserPage(BasePage):
     def is_opened(self, user_id):
         return f'/users/{user_id}' in self.current_url
     
-    def get_editing_user_data(self):
+    def get_user_data_from_form(self):
         email = self.value_of(self.EMAIL)
         first_name = self.value_of(self.FIRST_NAME)
         last_name = self.value_of(self.LAST_NAME)

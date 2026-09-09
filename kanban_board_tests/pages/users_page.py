@@ -1,3 +1,5 @@
+import random
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -15,7 +17,7 @@ class UsersPage(BasePage):
         return '/users' in self.current_url
 
 
-    def create_user(self):
+    def click_to_create(self):
         self.click(self.CREATE_BUTTON)
 
 
@@ -37,6 +39,13 @@ class UsersPage(BasePage):
                 'created_at': created_at
             })
         return parsed_data
+    
+    def get_random_user_id(self):
+        users = self.user_table_parse()
+        if not users:
+            return None
+        random_user = random.choice(users)
+        return random_user['id']
     
     
     def is_user_added(self, user):

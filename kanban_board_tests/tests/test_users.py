@@ -6,7 +6,9 @@ from kanban_board_tests.pages.edit_user_page import EditUserPage
 from kanban_board_tests.pages.dashboard_page import DashboardPage
 from kanban_board_tests.pages.user_creation_page import UserCreationPage
 from kanban_board_tests.pages.menu_component import Menu
+import kanban_board_tests.utils.actions_on_users as actions_on_users
 from kanban_board_tests.data.emails import INCORRECT_EMAILS
+from kanban_board_tests.data.users import USERS_DATA
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,34 +21,43 @@ def test_creation_user(driver, logged_in_user):
     # assert dashboard.is_opened()
     # assert 'Welcome to the administration' in dashboard.header_text()
         
+    # menu = Menu(driver)
+    # menu.go_to('Users')
+    
+    # users_page = UsersPage(driver)
+        
+    # actions_on_users.create(driver, users_page, USERS_DATA[0])
+    # menu.go_to('Users')
+        
+        
+
     menu = Menu(driver)
     menu.go_to('Users')
         
     users_page = UsersPage(driver)
     assert users_page.is_opened()
         
-    users_page.create_user()
+    users_page.click_to_create()
     logger.info('Button "Create user" pressed')
         
     user_creation = UserCreationPage(driver)
     user_creation.is_opened()
     assert 'Create User' in user_creation.header_text()
-                
-    USER = {
-        'email': 'kate@mail.com',
-        'first_name': 'Kate',
-        'last_name': 'Alison'
-    }
+     
+              
+    user = USERS_DATA[0]
         
-    user_creation.create_user(USER)
-    logger.info(f'Create user {USER['first_name']}')
-
-
+    user_creation.create_user(user)
+    logger.info(f'Create user {user['first_name']}')
+    
     menu.go_to('Users')
+    
+    
+    
     logger.info('Go to Users page')
         
-    assert users_page.is_user_added(USER), f'User {USER['first_name']} not found'
-    logger.info(f'User {USER['first_name']} added successfully!')
+    assert users_page.is_user_added(user), f'User {user['first_name']} not found'
+    logger.info(f'User {user['first_name']} added successfully!')
 
 
 def test_users_table_is_visibility(driver, logged_in_user):
@@ -91,38 +102,37 @@ def test_users_table_is_visibility(driver, logged_in_user):
 
 
 def test_edit_user_success(driver, logged_in_user):
-    USER_ID = '7'
-    
     menu = Menu(driver)
-    menu.go_to('Users')
     logger.info(f'Go to Users page')
+    menu.go_to('Users')
        
-    users_page = UsersPage(driver)     
-    selected_user = users_page.click_on_user(USER_ID)
-    logger.info(f'Click to user with ID {USER_ID}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
+    users_page = UsersPage(driver)   
+    user_id = users_page.get_random_user_id()
+    
+    
+    if user_id is None:
+        pytest.skip("Cannot run test: no users available in the table.")
+     
+    logger.info(f'User with ID = {user_id}')
+    
+    selected_user = users_page.click_on_user(user_id)
+    logger.info(f'Click to user with ID {user_id}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
 
     edit_user_page = EditUserPage(driver)
-    assert edit_user_page.is_opened(USER_ID), f'Expected edit page for user {USER_ID}, but condition is False'
-    logger.info(f'Open edit page user {USER_ID}')
+    assert edit_user_page.is_opened(user_id), f'Expected edit page for user {user_id}, but condition is False'
+    logger.info(f'Open edit page user {user_id}')
     
     assert f'User {selected_user['email']}' in edit_user_page.header_text(), f'This is not an edit page {selected_user['email']}'
 
-
     # Проверка на совпадение данных из формы с данными редактируемого пользователя
-    user_from_form = edit_user_page.get_editing_user_data()
+    user_from_form = edit_user_page.get_user_data_from_form()
     assert user_from_form == selected_user, f'selected for editing {selected_user['email']}, and the current user {user_from_form['email']}'
-    logger.info(f'User data matches')
+    logger.info(f'User data is populated correctly.')
     
     
 # Проверка, что измененные данные сохраняются
 def test_new_user_data_saved_success(driver, logged_in_user):
-    new_user_data = {
-        'email': 'new@mail.com',
-        'first_name': 'new_first_name',
-        'last_name': 'new_last_name',
-    }
-    
-    USER_ID = '7'
+    new_user_data = user = USERS_DATA[1]
     
     menu = Menu(driver)
     menu.go_to('Users')
@@ -131,16 +141,18 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     users_page = UsersPage(driver)     
     edit_user_page = EditUserPage(driver)
     
-    # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
-    user_data = users_page.click_on_user(USER_ID)
+    user_id = users_page.get_random_user_id()
     
-    logger.info(f'Click to user with ID {USER_ID}: {user_data['email']} {user_data['first_name']} {user_data['last_name']}')
+    # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
+    user_data = users_page.click_on_user(user_id)
+    
+    logger.info(f'Click to user with ID {user_id}: {user_data['email']} {user_data['first_name']} {user_data['last_name']}')
     
     # Ввод новых данных и нажатие "сохранить"
     edit_user_page.set_user_data(new_user_data)
     
     # Получаем данные этого же пользователя из таблицы, для проверки, что данные сохранились
-    user_data = users_page.click_on_user(USER_ID)
+    user_data = users_page.click_on_user(user_id)
     
     assert user_data == new_user_data, f'selected for editing {user_data}, and the current user {new_user_data}'
     logger.info(f'Update user data success')
@@ -148,29 +160,28 @@ def test_new_user_data_saved_success(driver, logged_in_user):
      
 @pytest.mark.parametrize('incorrect_email', INCORRECT_EMAILS)
 def test_email_validation(driver, logged_in_user, incorrect_email):
-    USER_ID = '3'
-    
     menu = Menu(driver)
     menu.go_to('Users')
     logger.info(f'Go to Users page')
       
     users_page = UsersPage(driver)
+    user_id = users_page.get_random_user_id()
     
     # Выбор пользователя для редактирования
-    users_page.click_on_user(USER_ID)
+    users_page.click_on_user(user_id)
     
     edit_user_page = EditUserPage(driver)
     logger.info(edit_user_page.current_url)
      
-    logger.info(f'email validation check')
-          
     logger.info(f'Input email: {incorrect_email}')
+    logger.info(f'Email validation check.')
 
     edit_user_page.set_user_email(incorrect_email)
-    email_from_form = edit_user_page.get_editing_user_data()['email']
+    email_from_form = edit_user_page.get_user_data_from_form()['email']
     
     assert email_from_form == incorrect_email, f'Expected {incorrect_email} in the email field, not {email_from_form}.'
     
     edit_user_page.click_save()
         
     assert edit_user_page.is_email_incorrect(), f'The email check was expected to fail, but it passed: {incorrect_email}'
+    logger.info(f'Invalid email failed validation.')
