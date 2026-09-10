@@ -1,14 +1,12 @@
-import pytest
 import logging
 
-from kanban_board_tests.pages.labels.labels_page import LabelsPage
+import pytest
+
+from kanban_board_tests.data.labels import LABELS_DATA
 from kanban_board_tests.pages.labels.edit_label_page import EditLabelPage
 from kanban_board_tests.pages.labels.label_creation_page import LabelCreationPage
+from kanban_board_tests.pages.labels.labels_page import LabelsPage
 from kanban_board_tests.pages.menu_component import Menu
-from kanban_board_tests.data.labels import LABELS_DATA
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 
 logger = logging.getLogger(__name__)
 
@@ -52,12 +50,10 @@ def test_labels_table_is_visibility(driver, logged_in_user):
 
     for i, u in enumerate(parsed_records):
         line_no = i + 1
-        has_problem = False
 
         name = u.get('name')
         if not name or (isinstance(name, str) and not name.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'name'")
-            has_problem = True
 
     if missing_issues:
         error_msg = "; ".join(missing_issues)
@@ -89,8 +85,8 @@ def test_edit_user_success(driver, logged_in_user):
 
     # Проверка на совпадение данных из формы с данными редактируемого пользователя
     label_from_form = edit_label_page.get_label_data_from_form()
-    assert label_from_form == selected_label, f'selected for editing {selected_label['name']}, and the current label {user_from_form['name']}'
-    logger.info(f'Label data is populated correctly.')
+    assert label_from_form == selected_label, f'selected for editing {selected_label['name']}, and the current label {label_from_form['name']}'
+    logger.info('Label data is populated correctly.')
     
 
 # Проверка, что измененные данные сохраняются
@@ -115,7 +111,7 @@ def test_new_label_data_saved_success(driver, logged_in_user):
     label_data = labels_page.click_on_record(label_id)
     
     assert label_data['name'] == new_label_data, f'selected for editing {label_data}, and the current label {new_label_data}'
-    logger.info(f'Update label data success')
+    logger.info('Update label data success')
     
 
 def test_remove_label_successful(driver, logged_in_user):  
@@ -139,7 +135,7 @@ def test_remove_label_successful(driver, logged_in_user):
     
     # Удаляем выделенного пользователя
     labels_page.click_to_delete()
-    logger.info(f'Click to "Delete"')
+    logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
     labels_after_deletion = labels_page.table_parse()
@@ -166,7 +162,7 @@ def test_remove_all_labels_successful(driver, logged_in_user):
     labels_count = len(labels)
     
     labels_page.select_all_records()
-    logger.info(f'Select all labels in the table.')
+    logger.info('Select all labels in the table.')
     
     # Удаляем выделенну метки
     labels_page.click_to_delete()

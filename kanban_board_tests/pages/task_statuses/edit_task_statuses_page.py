@@ -1,15 +1,8 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-
-from kanban_board_tests.pages.base_page import BasePage
-
-
 import logging
 
-import re
+from selenium.webdriver.common.by import By
 
-import time
-
+from kanban_board_tests.pages.base_page import BasePage
 
 logger = logging.getLogger(__name__)
 
@@ -41,5 +34,4 @@ class EditTaskStatusesPage(BasePage):
     def set_task_status_data(self, new_task_status_data):
         self.set_task_status_name(new_task_status_data['name'])
         self.set_task_status_slug(new_task_status_data['slug'])
-        # time.sleep(1)
         self.click_save()

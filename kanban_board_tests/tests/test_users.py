@@ -1,15 +1,13 @@
-import pytest
 import logging
 
-from kanban_board_tests.pages.users.users_page import UsersPage
-from kanban_board_tests.pages.users.edit_user_page import EditUserPage
-from kanban_board_tests.pages.users.user_creation_page import UserCreationPage
-from kanban_board_tests.pages.menu_component import Menu
+import pytest
+
 from kanban_board_tests.data.emails import INCORRECT_EMAILS
 from kanban_board_tests.data.users import USERS_DATA
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from kanban_board_tests.pages.menu_component import Menu
+from kanban_board_tests.pages.users.edit_user_page import EditUserPage
+from kanban_board_tests.pages.users.user_creation_page import UserCreationPage
+from kanban_board_tests.pages.users.users_page import UsersPage
 
 logger = logging.getLogger(__name__)
 
@@ -53,22 +51,18 @@ def test_users_table_is_visibility(driver, logged_in_user):
 
     for i, u in enumerate(parsed_records):
         line_no = i + 1
-        has_problem = False
 
         email = u.get('email')
         if not email or (isinstance(email, str) and not email.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'email'")
-            has_problem = True
 
         first_name = u.get('first_name')
         if not first_name or (isinstance(first_name, str) and not first_name.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'first_name'")
-            has_problem = True
 
         last_name = u.get('last_name')
         if not last_name or (isinstance(last_name, str) and not last_name.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'last_name'")
-            has_problem = True
 
     if missing_issues:
         error_msg = "; ".join(missing_issues)
@@ -101,12 +95,12 @@ def test_edit_user_success(driver, logged_in_user):
     # Проверка на совпадение данных из формы с данными редактируемого пользователя
     user_from_form = edit_user_page.get_user_data_from_form()
     assert user_from_form == selected_user, f'selected for editing {selected_user['email']}, and the current user {user_from_form['email']}'
-    logger.info(f'User data is populated correctly.')
+    logger.info('User data is populated correctly.')
     
     
 # Проверка, что измененные данные сохраняются
 def test_new_user_data_saved_success(driver, logged_in_user):
-    new_user_data = user = USERS_DATA[1]
+    new_user_data = USERS_DATA[1]
     
     menu = Menu(driver)
     menu.go_to('Users')
@@ -128,7 +122,7 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     user_data = users_page.click_on_record(user_id)
     
     assert user_data == new_user_data, f'selected for editing {user_data}, and the current user {new_user_data}'
-    logger.info(f'Update user data success')
+    logger.info('Update user data success')
     
      
 @pytest.mark.parametrize('incorrect_email', INCORRECT_EMAILS)
@@ -146,7 +140,7 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
     logger.info(edit_user_page.current_url)
      
     logger.info(f'Input email: {incorrect_email}')
-    logger.info(f'Email validation check.')
+    logger.info('Email validation check.')
 
     edit_user_page.set_user_email(incorrect_email)
     email_from_form = edit_user_page.get_user_data_from_form()['email']
@@ -156,7 +150,7 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
     edit_user_page.click_save()
         
     assert edit_user_page.is_email_incorrect(), f'The email check was expected to fail, but it passed: {incorrect_email}'
-    logger.info(f'Invalid email failed validation.')
+    logger.info('Invalid email failed validation.')
 
 
 def test_remove_user_successful(driver, logged_in_user):  
@@ -181,7 +175,7 @@ def test_remove_user_successful(driver, logged_in_user):
     
     # Удаляем выделенного пользователя
     users_page.click_to_delete()
-    logger.info(f'Click to "Delete"')
+    logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
     users_after_deletion = users_page.table_parse()
@@ -210,7 +204,7 @@ def test_remove_all_users_successful(driver, logged_in_user):
     users_count = len(users)
     
     users_page.select_all_records()
-    logger.info(f'Select all users in the table.')
+    logger.info('Select all users in the table.')
     
     # Удаляем выделенных пользователей
     users_page.click_to_delete()

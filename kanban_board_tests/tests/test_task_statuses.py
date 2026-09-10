@@ -1,14 +1,16 @@
-import pytest
 import logging
 
-from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
-from kanban_board_tests.pages.task_statuses.edit_task_statuses_page import EditTaskStatusesPage
-from kanban_board_tests.pages.task_statuses.task_status_creation_page import TaskStatusCreationPage
-from kanban_board_tests.pages.menu_component import Menu
-from kanban_board_tests.data.task_statuses import TASK_STATUSES
+import pytest
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from kanban_board_tests.data.task_statuses import TASK_STATUSES
+from kanban_board_tests.pages.menu_component import Menu
+from kanban_board_tests.pages.task_statuses.edit_task_statuses_page import (
+    EditTaskStatusesPage,
+)
+from kanban_board_tests.pages.task_statuses.task_status_creation_page import (
+    TaskStatusCreationPage,
+)
+from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
 
 logger = logging.getLogger(__name__)
 
@@ -53,17 +55,14 @@ def test_task_status_table_is_visibility(driver, logged_in_user):
 
     for i, u in enumerate(parsed_records):
         line_no = i + 1
-        has_problem = False
 
         name = u.get('name')
         if not name or (isinstance(name, str) and not name.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'name'")
-            has_problem = True
 
         slug = u.get('slug')
         if not slug or (isinstance(slug, str) and not slug.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'slug'")
-            has_problem = True
 
     if missing_issues:
         error_msg = "; ".join(missing_issues)
@@ -97,12 +96,12 @@ def test_edit_task_status_success(driver, logged_in_user):
     # Проверка на совпадение данных из формы с данными редактируемого пользователя
     task_status_from_form = edit_task_status_page.get_task_status_data_from_form()
     assert task_status_from_form == selected_task_status, f'selected for editing {selected_task_status['name']}, and the current user {task_status_from_form['name']}'
-    logger.info(f'Task status data is populated correctly.')
+    logger.info('Task status data is populated correctly.')
     
     
 # Проверка, что измененные данные сохраняются
 def test_new_task_status_data_saved_success(driver, logged_in_user):
-    new_task_status_data = user = TASK_STATUSES[1]
+    new_task_status_data = TASK_STATUSES[1]
     
     menu = Menu(driver)
     menu.go_to('Task statuses')
@@ -113,7 +112,7 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     task_status_id = task_status_page.get_random_id()
     
     # Получение данных из таблицы, на которого нажали, так же переход на редактирование
-    task_status_data = task_status_page.click_on_record(task_status_id)
+    task_status_page.click_on_record(task_status_id)
     
     logger.info(f'Click to task status with ID {task_status_id}: {new_task_status_data['name']} {new_task_status_data['slug']}')
     
@@ -124,7 +123,7 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     task_staus_data = task_status_page.click_on_record(task_status_id)
     
     assert task_staus_data == new_task_status_data, f'selected for editing {task_staus_data}, and the current task status {new_task_status_data}'
-    logger.info(f'Update task status data success')
+    logger.info('Update task status data success')
 
 
 def test_remove_task_status_successful(driver, logged_in_user):  
@@ -149,7 +148,7 @@ def test_remove_task_status_successful(driver, logged_in_user):
     
     # Удаляем выделенную запись
     task_status_page.click_to_delete()
-    logger.info(f'Click to "Delete"')
+    logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
     task_status_after_deletion = task_status_page.table_parse()
@@ -177,7 +176,7 @@ def test_remove_all_task_statuses_successful(driver, logged_in_user):
     task_statuses_count = len(task_statuses)
     
     task_status_page.select_all_records()
-    logger.info(f'Select all task statuses in the table.')
+    logger.info('Select all task statuses in the table.')
     
     # Удаляем выделенных пользователей
     task_status_page.click_to_delete()

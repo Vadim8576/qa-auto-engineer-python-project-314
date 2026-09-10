@@ -1,15 +1,9 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-
-from kanban_board_tests.pages.base_page import BasePage
-
-
 import logging
 
-import re
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 
-import time
-
+from kanban_board_tests.pages.base_page import BasePage
 
 logger = logging.getLogger(__name__)
 
@@ -48,14 +42,11 @@ class EditUserPage(BasePage):
         self.set_user_email(new_user_data['email'])
         self.set_user_first_name(new_user_data['first_name'])
         self.set_user_last_name(new_user_data['last_name'])
-        # time.sleep(1)
         self.click_save()
-    
-    
     
     def is_email_incorrect(self):
         try:           
             text = self.get_alert_text()
             return 'The form is not valid' in text
-        except Exception:
+        except TimeoutException:
             return False

@@ -1,11 +1,11 @@
 import logging
-import time
 import random
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
 
 from kanban_board_tests.pages.locators.table_locators import TableLocators
 
@@ -59,7 +59,7 @@ class BasePage:
         """Ждёт, пока существующий алерт исчезнет (станет невидимым или уйдёт из DOM)."""
         try:
             self.wait.until(EC.invisibility_of_element_located(self.ALERT))
-        except Exception:
+        except TimeoutException:
             pass
     
     def get_alert_text(self):

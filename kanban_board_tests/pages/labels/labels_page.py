@@ -1,4 +1,3 @@
-import time
 import logging
 
 from selenium.webdriver.common.by import By
