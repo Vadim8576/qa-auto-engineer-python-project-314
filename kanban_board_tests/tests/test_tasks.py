@@ -37,14 +37,29 @@ def test_creation_task(driver, logged_in_user):
     
     assert 'Create Task' in task_creation.header_text()
     
+    
+    random_option = task_creation.get_random_assignee_option()
+    task_creation.click_to_option(random_option)
+    logger.info(f'Select assignee: {random_option}')
+        
+    random_status = task_creation.get_random_status_option()
+    task_creation.click_to_option(random_status)
+    logger.info(f'Select status: {random_status}')
+    
     task_creation.create(TASK_DATA[0])  
+    
     assert task_creation.get_alert_text() == 'Element created'
+    logger.info(f'Task created!')
     
     menu.go_to(menu.PAGES['tasks'])
     
+    task_page.get_task_list_by_status('Published')
+    
+    
+    
     
 
-    # time.sleep(10)
+    time.sleep(3)
     
     
     

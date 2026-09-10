@@ -18,6 +18,33 @@ class TasksPage(BasePage):
     def is_opened(self):
         return '/tasks' in self.current_url
     
+    
+    
+    ##################################
+    
+    def get_column_container_xpath(self, column_title):
+        return (By.XPATH, f'//h6[normalize-space()="{column_title}"]/../*[2]')
+    
+    def get_task_list_by_status(self, status):
+        draft_container = self.driver.find_element(*self.get_column_container_xpath(status))
+        tasks = draft_container.find_elements(By.CSS_SELECTOR, 'div[role="button"]')
+        
+        logger.info(len(tasks))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ################################
+    
+
+    
     def table_parse(self):
         table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
         rows = table.find_elements(*TableLocators.ROW)

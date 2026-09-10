@@ -16,13 +16,7 @@ class TaskCreationPage(BasePage):
     def is_opened(self):
         return '/tasks/create' in self.current_url
         
-    def create(self, task_data):
-        random_option = self.get_random_assignee_option()
-        self.click_to_option(random_option)
-        
-        random_status = self.get_random_status_option()
-        self.click_to_option(random_status)
-             
+    def create(self, task_data):      
         self.type(TasksLocators.TITLE, task_data['title'])
         self.type(TasksLocators.CONTENT, task_data['description'])    
         self.click(TableLocators.SAVE_BUTTON)
