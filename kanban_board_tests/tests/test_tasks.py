@@ -2,33 +2,53 @@ import logging
 
 import pytest
 
-from kanban_board_tests.data.task_statuses import TASK_STATUSES
+import time
+
+from kanban_board_tests.data.tasks import TASK_DATA
 from kanban_board_tests.pages.menu_component import Menu
-from kanban_board_tests.pages.task_statuses.edit_task_statuses_page import (
-    EditTaskStatusesPage,
-)
-from kanban_board_tests.pages.task_statuses.task_status_creation_page import (
-    TaskStatusCreationPage,
-)
-from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
+from kanban_board_tests.pages.tasks.tasks_page import TasksPage
+from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
+from kanban_board_tests.pages.tasks.task_creation_page import TaskCreationPage
+
+
+
+from selenium.webdriver.common.by import By
+
+
 
 logger = logging.getLogger(__name__)
 
-def test_creation_task_status(driver, logged_in_user):
+def test_creation_task(driver, logged_in_user):
 
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['task_statuses'])
+    menu.go_to(menu.PAGES['tasks'])
         
-    task_status_page = TaskStatusesPage(driver)
+    task_page = TasksPage(driver)
     
-    assert task_status_page.is_opened()
+    assert task_page.is_opened()
     
-    task_status_page.click_to_create()
-    logger.info('Button "Create task status" pressed')
+    task_page.click_to_create()
+    logger.info('Button "Create task" pressed')
         
-    task_status_creation = TaskStatusCreationPage(driver)
-    task_status_creation.is_opened()
-    assert 'Create Task status' in task_status_creation.header_text()
+    task_creation = TaskCreationPage(driver)
+    
+    assert task_creation.is_opened()
+    logger.info('The task creation page is open')
+    
+    assert 'Create Task' in task_creation.header_text()
+    
+    task_creation.create(TASK_DATA[0])  
+    assert task_creation.get_alert_text() == 'Element created'
+    
+    menu.go_to(menu.PAGES['tasks'])
+    
+    
+
+    # time.sleep(10)
+    
+    
+    
+'''    
               
     new_task_status = TASK_STATUSES[0]
         
@@ -186,4 +206,4 @@ def test_remove_all_task_statuses_successful(driver, logged_in_user):
     assert task_status_page.records_is_missing(), 'The "No Task statuses yet" message is missing. Perhaps not all task statuses have been deleted.'
     logger.info('All task statuses have been successfully deleted.')
     
-    
+'''

@@ -1,8 +1,10 @@
 import logging
 import random
+import time
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -91,4 +93,22 @@ class BasePage:
         head = table_head.find_element(*TableLocators.ROW)
         checkbox = head.find_element(*TableLocators.CHECKBOX)
         checkbox.click()
+
+    def click_to_dropdown(self, selector):
+        trigger = self.driver.find_element(*selector)
+
+        self.wait.until(lambda d: trigger.is_displayed() and trigger.is_enabled())
+        try:
+            trigger.click()
+        except Exception:
+            self.driver.execute_script('arguments[0].click();', trigger)
+        # time.sleep(1)           
+        
     
+    def click_to_option(self, option_text):
+        
+        option = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, f"//li[normalize-space()='{option_text}']"))
+        )
+        option.click()  
+        # time.sleep(1)
