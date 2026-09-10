@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def test_creation_label(driver, logged_in_user):
     logger.info('Test creation label')
     menu = Menu(driver)
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
         
     labels_page = LabelsPage(driver)
     assert labels_page.is_opened()
@@ -30,7 +30,7 @@ def test_creation_label(driver, logged_in_user):
     label_creation.create(label)
     logger.info(f'Create label {label}')
     
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
         
     assert labels_page.is_record_added(label), f'Label {label} not found'
     logger.info(f'Label {label} added successfully!')
@@ -38,7 +38,7 @@ def test_creation_label(driver, logged_in_user):
 
 def test_labels_table_is_visibility(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
     labels_page = LabelsPage(driver)
     assert labels_page.table_loads(), 'Labels table not loaded!'
 
@@ -64,7 +64,7 @@ def test_labels_table_is_visibility(driver, logged_in_user):
 
 def test_edit_user_success(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
     labels_page = LabelsPage(driver)
     label_id = labels_page.get_random_id()
     
@@ -94,7 +94,7 @@ def test_new_label_data_saved_success(driver, logged_in_user):
     new_label_data = LABELS_DATA[1]
     
     menu = Menu(driver)
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
     labels_page = LabelsPage(driver)
     edit_label_page = EditLabelPage(driver)
     label_id = labels_page.get_random_id()
@@ -116,7 +116,7 @@ def test_new_label_data_saved_success(driver, logged_in_user):
 
 def test_remove_label_successful(driver, logged_in_user):  
     menu = Menu(driver)
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
     labels_page = LabelsPage(driver)
     
     # Парсим таблицу
@@ -155,7 +155,7 @@ def test_remove_label_successful(driver, logged_in_user):
 
 def test_remove_all_labels_successful(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Labels')
+    menu.go_to(menu.PAGES['labels'])
     labels_page = LabelsPage(driver)
     
     labels = labels_page.table_parse()

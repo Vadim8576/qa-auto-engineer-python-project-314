@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def test_creation_user(driver, logged_in_user):
     logger.info('Test creation user')
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
         
     users_page = UsersPage(driver)
     assert users_page.is_opened()
@@ -31,7 +31,7 @@ def test_creation_user(driver, logged_in_user):
     user_creation.create(user)
     logger.info(f'Create user {user['first_name']}')
     
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
         
     assert users_page.is_record_added(user), f'User {user['first_name']} not found'
     logger.info(f'User {user['first_name']} added successfully!')
@@ -39,7 +39,7 @@ def test_creation_user(driver, logged_in_user):
 
 def test_users_table_is_visibility(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
     users_page = UsersPage(driver)
     assert users_page.table_loads(), 'Users table not loaded!'
 
@@ -73,7 +73,7 @@ def test_users_table_is_visibility(driver, logged_in_user):
 
 def test_edit_user_success(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
        
     users_page = UsersPage(driver)   
     user_id = users_page.get_random_id()
@@ -103,7 +103,7 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     new_user_data = USERS_DATA[1]
     
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
        
     users_page = UsersPage(driver)     
     edit_user_page = EditUserPage(driver)
@@ -128,7 +128,7 @@ def test_new_user_data_saved_success(driver, logged_in_user):
 @pytest.mark.parametrize('incorrect_email', INCORRECT_EMAILS)
 def test_email_validation(driver, logged_in_user, incorrect_email):
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
       
     users_page = UsersPage(driver)
     user_id = users_page.get_random_id()
@@ -155,7 +155,7 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
 
 def test_remove_user_successful(driver, logged_in_user):  
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
       
     users_page = UsersPage(driver)
     
@@ -197,7 +197,7 @@ def test_remove_user_successful(driver, logged_in_user):
 
 def test_remove_all_users_successful(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Users')
+    menu.go_to(menu.PAGES['users'])
       
     users_page = UsersPage(driver)
     users = users_page.table_parse()

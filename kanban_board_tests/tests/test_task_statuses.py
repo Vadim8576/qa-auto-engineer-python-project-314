@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def test_creation_task_status(driver, logged_in_user):
 
     menu = Menu(driver)
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
         
     task_status_page = TaskStatusesPage(driver)
     
@@ -35,7 +35,7 @@ def test_creation_task_status(driver, logged_in_user):
     task_status_creation.create(new_task_status)
     logger.info(f'Create user {new_task_status['name']}')
     
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
         
     assert task_status_page.is_record_added(new_task_status), f'User {new_task_status['name']} not found'
     logger.info(f'Task status {new_task_status['name']} added successfully!')
@@ -43,7 +43,7 @@ def test_creation_task_status(driver, logged_in_user):
 
 def test_task_status_table_is_visibility(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
     task_status_page = TaskStatusesPage(driver)
     assert task_status_page.table_loads(), 'Users table not loaded!'
 
@@ -73,7 +73,7 @@ def test_task_status_table_is_visibility(driver, logged_in_user):
 
 def test_edit_task_status_success(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     task_status_id = task_status_page.get_random_id()
@@ -104,7 +104,7 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     new_task_status_data = TASK_STATUSES[1]
     
     menu = Menu(driver)
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     edit_task_status_page = EditTaskStatusesPage(driver)
@@ -128,7 +128,7 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
 
 def test_remove_task_status_successful(driver, logged_in_user):  
     menu = Menu(driver)
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     
@@ -169,7 +169,7 @@ def test_remove_task_status_successful(driver, logged_in_user):
 
 def test_remove_all_task_statuses_successful(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to('Task statuses')
+    menu.go_to(menu.PAGES['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     task_statuses = task_status_page.table_parse()
