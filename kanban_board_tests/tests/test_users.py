@@ -1,10 +1,9 @@
 import pytest
 import logging
 
-from kanban_board_tests.pages.users_page import UsersPage
-from kanban_board_tests.pages.edit_user_page import EditUserPage
-from kanban_board_tests.pages.dashboard_page import DashboardPage
-from kanban_board_tests.pages.user_creation_page import UserCreationPage
+from kanban_board_tests.pages.users.users_page import UsersPage
+from kanban_board_tests.pages.users.edit_user_page import EditUserPage
+from kanban_board_tests.pages.users.user_creation_page import UserCreationPage
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.data.emails import INCORRECT_EMAILS
 from kanban_board_tests.data.users import USERS_DATA
@@ -15,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 logger = logging.getLogger(__name__)
 
 def test_creation_user(driver, logged_in_user):
-
+    logger.info('Test creation user')
     menu = Menu(driver)
     menu.go_to('Users')
         
@@ -35,8 +34,6 @@ def test_creation_user(driver, logged_in_user):
     logger.info(f'Create user {user['first_name']}')
     
     menu.go_to('Users')
-       
-    logger.info('Go to Users page')
         
     assert users_page.is_record_added(user), f'User {user['first_name']} not found'
     logger.info(f'User {user['first_name']} added successfully!')
@@ -72,11 +69,6 @@ def test_users_table_is_visibility(driver, logged_in_user):
         if not last_name or (isinstance(last_name, str) and not last_name.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'last_name'")
             has_problem = True
-            
-        # create_at = u.get('created_at')
-        # if not create_at or (isinstance(create_at, str) and not create_at.strip()):
-        #     missing_issues.append(f"Line {line_no}: missing/empty 'create_at'")
-        #     has_problem = True
 
     if missing_issues:
         error_msg = "; ".join(missing_issues)
@@ -87,12 +79,10 @@ def test_users_table_is_visibility(driver, logged_in_user):
 
 def test_edit_user_success(driver, logged_in_user):
     menu = Menu(driver)
-    logger.info(f'Go to Users page')
     menu.go_to('Users')
        
     users_page = UsersPage(driver)   
     user_id = users_page.get_random_id()
-    
     
     if user_id is None:
         pytest.skip("Cannot run test: no users available in the table.")
@@ -120,7 +110,6 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     
     menu = Menu(driver)
     menu.go_to('Users')
-    logger.info(f'Go to Users page')
        
     users_page = UsersPage(driver)     
     edit_user_page = EditUserPage(driver)
@@ -146,7 +135,6 @@ def test_new_user_data_saved_success(driver, logged_in_user):
 def test_email_validation(driver, logged_in_user, incorrect_email):
     menu = Menu(driver)
     menu.go_to('Users')
-    logger.info(f'Go to Users page')
       
     users_page = UsersPage(driver)
     user_id = users_page.get_random_id()
@@ -174,7 +162,6 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
 def test_remove_user_successful(driver, logged_in_user):  
     menu = Menu(driver)
     menu.go_to('Users')
-    logger.info(f'Go to Users page')
       
     users_page = UsersPage(driver)
     
@@ -217,7 +204,6 @@ def test_remove_user_successful(driver, logged_in_user):
 def test_remove_all_users_successful(driver, logged_in_user):
     menu = Menu(driver)
     menu.go_to('Users')
-    logger.info(f'Go to Users page')
       
     users_page = UsersPage(driver)
     users = users_page.table_parse()

@@ -1,9 +1,9 @@
 import pytest
 import logging
 
-from kanban_board_tests.pages.task_statuses_page import TaskStatusesPage
-from kanban_board_tests.pages.edit_task_statuses_page import EditTaskStatusesPage
-from kanban_board_tests.pages.task_status_creation_page import TaskStatusCreationPage
+from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
+from kanban_board_tests.pages.task_statuses.edit_task_statuses_page import EditTaskStatusesPage
+from kanban_board_tests.pages.task_statuses.task_status_creation_page import TaskStatusCreationPage
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.data.task_statuses import TASK_STATUSES
 
@@ -34,8 +34,6 @@ def test_creation_task_status(driver, logged_in_user):
     logger.info(f'Create user {new_task_status['name']}')
     
     menu.go_to('Task statuses')
-       
-    logger.info('Go to Task statuses')
         
     assert task_status_page.is_record_added(new_task_status), f'User {new_task_status['name']} not found'
     logger.info(f'Task status {new_task_status['name']} added successfully!')
@@ -44,7 +42,6 @@ def test_creation_task_status(driver, logged_in_user):
 def test_task_status_table_is_visibility(driver, logged_in_user):
     menu = Menu(driver)
     menu.go_to('Task statuses')
-    logger.info('Go to Task statuses')
     task_status_page = TaskStatusesPage(driver)
     assert task_status_page.table_loads(), 'Users table not loaded!'
 
@@ -67,11 +64,6 @@ def test_task_status_table_is_visibility(driver, logged_in_user):
         if not slug or (isinstance(slug, str) and not slug.strip()):
             missing_issues.append(f"Line {line_no}: missing/empty 'slug'")
             has_problem = True
-            
-        # create_at = u.get('created_at')
-        # if not create_at or (isinstance(create_at, str) and not create_at.strip()):
-        #     missing_issues.append(f"Line {line_no}: missing/empty 'create_at'")
-        #     has_problem = True
 
     if missing_issues:
         error_msg = "; ".join(missing_issues)
@@ -83,7 +75,6 @@ def test_task_status_table_is_visibility(driver, logged_in_user):
 def test_edit_task_status_success(driver, logged_in_user):
     menu = Menu(driver)
     menu.go_to('Task statuses')
-    logger.info('Go to Task statuses')
        
     task_status_page = TaskStatusesPage(driver)
     task_status_id = task_status_page.get_random_id()
@@ -108,7 +99,6 @@ def test_edit_task_status_success(driver, logged_in_user):
     assert task_status_from_form == selected_task_status, f'selected for editing {selected_task_status['name']}, and the current user {task_status_from_form['name']}'
     logger.info(f'Task status data is populated correctly.')
     
-   
     
 # Проверка, что измененные данные сохраняются
 def test_new_task_status_data_saved_success(driver, logged_in_user):
@@ -116,7 +106,6 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     
     menu = Menu(driver)
     menu.go_to('Task statuses')
-    logger.info('Go to Task statuses')
        
     task_status_page = TaskStatusesPage(driver)
     edit_task_status_page = EditTaskStatusesPage(driver)
@@ -138,11 +127,9 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     logger.info(f'Update task status data success')
 
 
-
 def test_remove_task_status_successful(driver, logged_in_user):  
     menu = Menu(driver)
     menu.go_to('Task statuses')
-    logger.info('Go to Task statuses')
        
     task_status_page = TaskStatusesPage(driver)
     
@@ -184,7 +171,6 @@ def test_remove_task_status_successful(driver, logged_in_user):
 def test_remove_all_task_statuses_successful(driver, logged_in_user):
     menu = Menu(driver)
     menu.go_to('Task statuses')
-    logger.info('Go to Task statuses')
        
     task_status_page = TaskStatusesPage(driver)
     task_statuses = task_status_page.table_parse()

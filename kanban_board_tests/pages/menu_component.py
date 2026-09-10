@@ -6,7 +6,6 @@ from selenium.webdriver.common.by import By
 
 from kanban_board_tests.pages.base_page import BasePage
 
-
 logger = logging.getLogger(__name__)
 
 class Menu(BasePage):
@@ -18,10 +17,11 @@ class Menu(BasePage):
         for item in items:
             if page_name.strip() == item.text.strip():
                 item.click()
-                logger.info(f'Menu button "{item.text}" pressed')
+                logger.info(f'Menu button "{item.text}" pressed. Go to {item.text} page.')
                 return
 
         raise ValueError(
             f'Menu item "{page_name}" not found'
         )
         
+    

@@ -1,0 +1,1 @@
+LABELS_DATA = ['blocker', 'qa-in-progress']

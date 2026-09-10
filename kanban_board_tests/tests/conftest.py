@@ -5,7 +5,7 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from kanban_board_tests.pages.login_page import LoginPage
+from kanban_board_tests.pages.login.login_page import LoginPage
 
 logger = logging.getLogger(__name__)
 

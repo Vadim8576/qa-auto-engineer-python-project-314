@@ -6,67 +6,27 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
+from kanban_board_tests.pages.locators.table_locators import TableLocators
 
 logger = logging.getLogger(__name__)
 
 class UsersPage(BasePage):
-    CREATE_BUTTON = (By.CSS_SELECTOR, 'a[aria-label="Create"]')
-    DELETE_BUTTON = (By.CSS_SELECTOR, 'button[aria-label="Delete"]')
-    TABLE_HEAD = (By.TAG_NAME, 'thead')
-    TABLE = (By.TAG_NAME, 'tbody')
-    ROW = (By.TAG_NAME, 'tr')
-    CELL = (By.TAG_NAME, 'td')
-    CHECKBOX = (By.CSS_SELECTOR, 'input[type="checkbox"]')
-    DATA_ROWS = (By.CSS_SELECTOR, 'tbody tr')
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Users yet')]")
-    
-    def click_to_create(self):
-        self.click(self.CREATE_BUTTON)
-    
-    def click_to_delete(self):
-        self.click(self.DELETE_BUTTON)
-
-    def get_random_id(self):
-        records = self.table_parse()
-        if not records:
-            return None
-        random_records = random.choice(records)
-        return random_records['id']
-    
-    def table_loads(self):
-        try:
-            self.wait.until(
-                lambda d: [r for r in d.find_elements(*self.DATA_ROWS) if r.is_displayed()]
-            )
-            return True
-        except TimeoutException:
-            return False
-    
-    def select_all_records(self):        
-        table_head = self.wait.until(EC.visibility_of_element_located(self.TABLE_HEAD))
-        head = table_head.find_element(*self.ROW)
-        checkbox = head.find_element(*self.CHECKBOX)
-        checkbox.click()
     
     def records_is_missing(self):
         elements = self.driver.find_elements(*self.NO_RECORDS_MESSAGE)
         return len(elements) > 0
     
-    
-    
-    
-    
-    
     def is_opened(self):
         return '/users' in self.current_url
     
     def table_parse(self):
-        table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
-        rows = table.find_elements(*self.ROW)
+        table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
+        rows = table.find_elements(*TableLocators.ROW)
 
         parsed_data = []
         for row in rows:
-            cells = row.find_elements(*self.CELL)
+            cells = row.find_elements(*TableLocators.CELL)
             row_data = [cell.text.strip() for cell in cells]
             user_id, email, first_name, last_name, created_at = row_data[1:6]
             
@@ -93,11 +53,11 @@ class UsersPage(BasePage):
     
 
     def click_on_record(self, user_id):       
-        table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
-        rows = table.find_elements(*self.ROW)
+        table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
+        rows = table.find_elements(*TableLocators.ROW)
 
         for row in rows:
-            cells = row.find_elements(*self.CELL)
+            cells = row.find_elements(*TableLocators.CELL)
             row_data = [cell.text.strip() for cell in cells]
             row_user_id, email, first_name, last_name, _ = row_data[1:]
             if row_user_id == user_id:
@@ -109,18 +69,18 @@ class UsersPage(BasePage):
                 }
     
     def select_record(self, user_id):
-        table = self.wait.until(EC.visibility_of_element_located(self.TABLE))
-        rows = table.find_elements(*self.ROW)
+        table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
+        rows = table.find_elements(*TableLocators.ROW)
 
         for row in rows:
-            cells = row.find_elements(*self.CELL)         
+            cells = row.find_elements(*TableLocators.CELL)         
             row_data = [cell.text.strip() for cell in cells]
             row_user_id, email, first_name, last_name, _ = row_data[1:]
             # row_user_id = row_data[1]
             
             if row_user_id == user_id:
                 logger.info(f'Click on checkbox with ID = {user_id}')
-                checkbox = row.find_element(*self.CHECKBOX)
+                checkbox = row.find_element(*TableLocators.CHECKBOX)
                 checkbox.click()
                 return {
                     'email': email,
