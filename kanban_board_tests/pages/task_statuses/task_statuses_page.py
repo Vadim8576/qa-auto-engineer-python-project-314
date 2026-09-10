@@ -8,8 +8,7 @@ from kanban_board_tests.pages.locators.table_locators import TableLocators
 
 logger = logging.getLogger(__name__)
 
-class TaskStatusesPage(BasePage):
-    
+class TaskStatusesPage(BasePage):   
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
     
     def records_is_missing(self):

@@ -2,19 +2,16 @@ import logging
 import random
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from kanban_board_tests.pages.locators.base_locators import BaseLocators
 from kanban_board_tests.pages.locators.table_locators import TableLocators
 
 logger = logging.getLogger(__name__)
 
 class BasePage:
-    HEADER = (By.ID, 'react-admin-title')
-    ALERT = (By.CSS_SELECTOR, 'div[role="alert"] div[class*="message"]')
-        
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
@@ -53,17 +50,17 @@ class BasePage:
         return el.get_attribute('value')
 
     def header_text(self):
-        return self.text_of(self.HEADER)
+        return self.text_of(BaseLocators.HEADER)
     
     def wait_alert_invisibility(self):
         """Ждёт, пока существующий алерт исчезнет (станет невидимым или уйдёт из DOM)."""
         try:
-            self.wait.until(EC.invisibility_of_element_located(self.ALERT))
+            self.wait.until(EC.invisibility_of_element_located(BaseLocators.ALERT))
         except TimeoutException:
             pass
     
     def get_alert_text(self):
-        text = self.text_of(self.ALERT)
+        text = self.text_of(BaseLocators.ALERT)
         self.wait_alert_invisibility()
         return text
 

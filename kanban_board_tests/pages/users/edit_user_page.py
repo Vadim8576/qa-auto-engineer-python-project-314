@@ -1,25 +1,21 @@
 import logging
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
 
 from kanban_board_tests.pages.base_page import BasePage
+from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.pages.locators.user_locators import UserLocators
 
 logger = logging.getLogger(__name__)
 
-class EditUserPage(BasePage):  
-    EMAIL = (By.CSS_SELECTOR, 'input[name="email"]')
-    FIRST_NAME = (By.CSS_SELECTOR, 'input[name="firstName"]')
-    LAST_NAME = (By.CSS_SELECTOR, 'input[name="lastName"]')
-    SAVE = (By.CSS_SELECTOR, 'button[type="submit"]')
-    
+class EditUserPage(BasePage):
     def is_opened(self, user_id):
         return f'/users/{user_id}' in self.current_url
     
     def get_user_data_from_form(self):
-        email = self.value_of(self.EMAIL)
-        first_name = self.value_of(self.FIRST_NAME)
-        last_name = self.value_of(self.LAST_NAME)
+        email = self.value_of(UserLocators.EMAIL)
+        first_name = self.value_of(UserLocators.FIRST_NAME)
+        last_name = self.value_of(UserLocators.LAST_NAME)
         return {
             'email': email,
             'first_name': first_name,
@@ -27,16 +23,16 @@ class EditUserPage(BasePage):
         }
         
     def set_user_email(self, email):
-        self.type(self.EMAIL, email)
+        self.type(UserLocators.EMAIL, email)
     
     def set_user_first_name(self, first_name):
-        self.type(self.FIRST_NAME, first_name)
+        self.type(UserLocators.FIRST_NAME, first_name)
     
     def set_user_last_name(self, last_name):
-        self.type(self.LAST_NAME, last_name)
+        self.type(UserLocators.LAST_NAME, last_name)
     
     def click_save(self):
-        self.click(self.SAVE)
+        self.click(TableLocators.SAVE_BUTTON)
         
     def set_user_data(self, new_user_data):
         self.set_user_email(new_user_data['email'])
