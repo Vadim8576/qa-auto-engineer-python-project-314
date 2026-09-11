@@ -4,6 +4,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
@@ -25,24 +26,51 @@ class TasksPage(BasePage, TaksMixin):
     def is_opened(self):
         return '/tasks' in self.current_url
     
-    
-    
-    ##################################
-    
-    # def get_all_status_columns(self):
-    #     column_number = COLUMN_INDICES[status]
-    #     columns = []
-    #     for _, column_number in COLUMN_INDICES:   
-    #         column = self.driver.find_element(*TasksLocators.column_container(column_number))
-    #         columns.append(column)
-        
-    #     return columns
-    
     # def get_all_status_columns(self):
     #     return self.driver.find_elements(*TasksLocators.STATUS_COLUMNS)
     
+    def are_all_tasks_visible(self):
+        def all_visible(driver):
+            elements = self.driver.find_elements(*TasksLocators.TASKS)
+            if not elements:
+                return False
+
+            for el in elements:
+                try:
+                    if not el.is_displayed():
+                        return False
+                except StaleElementReferenceException:
+                    return False
+            return True
+        try:
+            self.wait.until(all_visible)
+            return True
+        except TimeoutException:
+            return False
+    
+    def are_all_tasks_clickable(self, timeout=10):
+        def all_clickable(_):
+            elements = self.driver.find_elements(*TasksLocators.TASKS)
+            if not elements:
+                return False
+
+            for el in elements:
+                try:
+                    if not (el.is_displayed() and el.is_enabled()):
+                        return False
+                except StaleElementReferenceException:
+                    return False
+            return True
+        try:
+            self.wait.until(all_clickable)
+            return True
+        except TimeoutException:
+            return False
+    
+    
     def get_all_tasks(self):
         return self.driver.find_elements(*TasksLocators.TASKS)
+    
     
     def wait_for_task_count_change(self, old_count):
         self.wait.until(lambda d: len(self.get_all_tasks()) != old_count)
@@ -80,13 +108,10 @@ class TasksPage(BasePage, TaksMixin):
             for t in tasks
         )
     
-    
     def click_edit(self, task):
         edit_button = task.find_element(*TasksLocators.EDIT_BUTTON)
         edit_button.click()
         
-        
-    
     def find_first_available_task(self):
         task = None
         for column_status in COLUMN_INDICES:

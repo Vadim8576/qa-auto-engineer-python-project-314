@@ -164,6 +164,17 @@ def test_filter_by_label(driver, logged_in_user):
         all_tasks_after = task_page.get_all_tasks()
         assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
         logger.info(f'Filter {label} has triggered.')
+
+def test_all_tasks_visability_and_clickable(driver, logged_in_user):
+    menu = Menu(driver)
+    menu.go_to(menu.PAGES['tasks'])
+ 
+    task_page = TasksPage(driver)
+    logger.info('Checking if all tasks have been loaded.')
+    assert task_page.are_all_tasks_visible()
+    assert task_page.are_all_tasks_clickable()
+    logger.info('All tasks have been successfully loaded.')
+
       
 '''   
     

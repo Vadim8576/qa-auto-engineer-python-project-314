@@ -64,10 +64,17 @@ class BasePage:
         self.wait_alert_invisibility()
         return text
 
+    def is_element_visible(self, locator):
+        try:
+            self.wait.until(EC.visibility_of_element_located(locator))
+            return True
+        except TimeoutException:
+            return False
     
-
-    
-    
-    
-
+    def is_element_clickable(self, locator):
+        try:
+            self.wait.until(EC.element_to_be_clickable(locator))
+            return True
+        except TimeoutException:
+            return False
     
