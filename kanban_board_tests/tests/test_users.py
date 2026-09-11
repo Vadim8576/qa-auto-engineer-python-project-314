@@ -28,7 +28,7 @@ def test_creation_user(driver, logged_in_user):
               
     user = USERS_DATA[0]
         
-    user_creation.create(user)
+    user_creation.set_user_data(user)
     logger.info(f'Create user {user['first_name']}')
     
     menu.go_to(menu.PAGES['users'])

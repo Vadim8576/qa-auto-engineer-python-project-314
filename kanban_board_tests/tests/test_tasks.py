@@ -11,11 +11,6 @@ from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
 from kanban_board_tests.pages.tasks.task_creation_page import TaskCreationPage
 
 
-
-from selenium.webdriver.common.by import By
-
-
-
 logger = logging.getLogger(__name__)
 
 def test_creation_task(driver, logged_in_user):
@@ -82,19 +77,40 @@ def test_edit_task_success(driver, logged_in_user):
     # ищем первую карточку для редактирования в одном из столбцов
     task = task_page.find_first_available_task()
     task_page.click_edit(task)
+    
     # Получаем данные из редактируемой карточки
     start_task_data = edit_task_page.get_task_data_from_form()
     
-    logger.info(start_task_data)
     
-    
+    # Создаем новые данные карточки
+    random_assignee = edit_task_page.get_random_assignee_option()
+    random_status = edit_task_page.get_random_status_option()
+
     new_task_data = {
         'title': TASK_DATA[1]['title'],
         'description': TASK_DATA[1]['description'],
-        
-    }
+        'assignee': random_assignee,
+        'status': random_status
+    }     
     
-    edit_task_page.set_task_data()
+    logger.info('New data has been created.') 
+    
+    
+    # Вводим новые данные в форму и сохраняем
+    logger.info('Editing the form.')
+    edit_task_page.set_task_data(new_task_data)
+    logger.info('New data saved.')
+      
+    # ищем ту же карточку, которую редактировали
+    task = task_page.find_first_available_task()
+    # заходим в нее
+    task_page.click_edit(task)
+    # Получаем данные из редактируемой карточки
+    end_task_data = edit_task_page.get_task_data_from_form()
+    
+    assert start_task_data != end_task_data, 'The data has not changed.'
+    assert end_task_data == new_task_data, 'The data was not saved.'
+    logger.info('The record with the new data has been successfully saved!')
     
     
     

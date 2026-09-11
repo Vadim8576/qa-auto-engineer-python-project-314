@@ -2,11 +2,12 @@ import logging
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.labels_locators import LabelsLocators
-from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.mixins.labels_mixin import LabelsMixin
+from kanban_board_tests.mixins.table_mixin import TableMixin
 
 logger = logging.getLogger(__name__)
 
-class EditLabelPage(BasePage):
+class EditLabelPage(BasePage, LabelsMixin, TableMixin):
     def is_opened(self, label_id):
         return f'/labels/{label_id}' in self.current_url
     

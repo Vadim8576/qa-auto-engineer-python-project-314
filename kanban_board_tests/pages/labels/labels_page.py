@@ -5,10 +5,13 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.mixins.labels_mixin import LabelsMixin
+from kanban_board_tests.mixins.table_mixin import TableMixin
+
 
 logger = logging.getLogger(__name__)
 
-class LabelsPage(BasePage):  
+class LabelsPage(BasePage, TableMixin):  
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Labels yet')]")
     
     def records_is_missing(self):

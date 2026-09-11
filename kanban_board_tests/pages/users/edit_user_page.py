@@ -3,12 +3,13 @@ import logging
 from selenium.common.exceptions import TimeoutException
 
 from kanban_board_tests.pages.base_page import BasePage
-from kanban_board_tests.pages.locators.table_locators import TableLocators
-from kanban_board_tests.pages.locators.user_locators import UserLocators
+from kanban_board_tests.pages.locators.users_locators import UserLocators
+from kanban_board_tests.mixins.users_mixin import UsersMixin
+from kanban_board_tests.mixins.table_mixin import TableMixin
 
 logger = logging.getLogger(__name__)
 
-class EditUserPage(BasePage):
+class EditUserPage(BasePage, UsersMixin, TableMixin):
     def is_opened(self, user_id):
         return f'/users/{user_id}' in self.current_url
     
@@ -22,21 +23,6 @@ class EditUserPage(BasePage):
             'last_name': last_name
         }
         
-    def set_user_email(self, email):
-        self.type(UserLocators.EMAIL, email)
-    
-    def set_user_first_name(self, first_name):
-        self.type(UserLocators.FIRST_NAME, first_name)
-    
-    def set_user_last_name(self, last_name):
-        self.type(UserLocators.LAST_NAME, last_name)
-        
-    def set_user_data(self, new_user_data):
-        self.set_user_email(new_user_data['email'])
-        self.set_user_first_name(new_user_data['first_name'])
-        self.set_user_last_name(new_user_data['last_name'])
-        self.click_save()
-    
     def is_email_incorrect(self):
         try:           
             text = self.get_alert_text()

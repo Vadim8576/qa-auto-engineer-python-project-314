@@ -9,7 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from kanban_board_tests.pages.locators.base_locators import BaseLocators
-from kanban_board_tests.pages.locators.table_locators import TableLocators
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +29,8 @@ class BasePage:
         return self.driver.current_url
 
     def click(self, locator):
-        # el = self.wait.until(EC.element_to_be_clickable(locator))
-        el = self.wait.until(EC.presence_of_element_located(locator))
+        el = self.wait.until(EC.element_to_be_clickable(locator))
+        # el = self.wait.until(EC.presence_of_element_located(locator))
         el.click()
 
     def type(self, locator, text):
@@ -65,35 +64,10 @@ class BasePage:
         self.wait_alert_invisibility()
         return text
 
-    def click_create(self):
-        self.click(TableLocators.CREATE_BUTTON)
     
-    def click_delete(self):
-        self.click(TableLocators.DELETE_BUTTON)
-    
-    def click_save(self):
-        self.click(TableLocators.SAVE_BUTTON)
 
-    def get_random_id(self):
-        records = self.table_parse()
-        if not records:
-            return None
-        random_records = random.choice(records)
-        return random_records['id']
     
-    def table_loads(self):
-        try:
-            self.wait.until(
-                lambda d: [r for r in d.find_elements(*TableLocators.DATA_ROWS) if r.is_displayed()]
-            )
-            return True
-        except TimeoutException:
-            return False
     
-    def select_all_records(self):        
-        table_head = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE_HEAD))
-        head = table_head.find_element(*TableLocators.ROW)
-        checkbox = head.find_element(*TableLocators.CHECKBOX)
-        checkbox.click()
+    
 
     

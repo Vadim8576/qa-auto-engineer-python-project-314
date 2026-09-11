@@ -1,14 +1,8 @@
-
-
 from kanban_board_tests.pages.base_page import BasePage
-from kanban_board_tests.pages.locators.labels_locators import LabelsLocators
-from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.mixins.labels_mixin import LabelsMixin
 
 
-class LabelCreationPage(BasePage):
+class LabelCreationPage(BasePage, LabelsMixin):
     def is_opened(self):
         return '/labels/create' in self.current_url
         
-    def create(self, label_data):
-        self.type(LabelsLocators.NAME, label_data)
-        self.click(TableLocators.SAVE_BUTTON)

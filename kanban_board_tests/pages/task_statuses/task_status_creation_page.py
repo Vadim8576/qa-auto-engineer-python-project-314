@@ -2,12 +2,13 @@
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.mixins.task_statuses_mixin import TaskStatusesMixin
 from kanban_board_tests.pages.locators.task_statuses_locators import (
     TaskStatusesLocators,
 )
 
 
-class TaskStatusCreationPage(BasePage):  
+class TaskStatusCreationPage(BasePage, TaskStatusesMixin):  
     def is_opened(self):
         return '/task_statuses/create' in self.current_url
         

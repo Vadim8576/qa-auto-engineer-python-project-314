@@ -4,11 +4,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
+from kanban_board_tests.mixins.table_mixin import TableMixin
 from kanban_board_tests.pages.locators.table_locators import TableLocators
 
 logger = logging.getLogger(__name__)
 
-class UsersPage(BasePage):
+class UsersPage(BasePage, TableMixin):
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Users yet')]")
     
     def records_is_missing(self):
