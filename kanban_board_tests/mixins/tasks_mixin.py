@@ -23,6 +23,10 @@ class TaksMixin:
     def select_status(self, option):
         self.click_to_dropdown(TasksLocators.STATUS_COMBOBOX)
         self.click_to_option(option)
+    
+    def select_label(self, option):
+        self.click_to_dropdown(TasksLocators.LABEL_COMBOBOX)
+        self.click_to_option(option)
         
     def set_task_data(self, new_task_data):
         self.set_task_title(new_task_data['title'])

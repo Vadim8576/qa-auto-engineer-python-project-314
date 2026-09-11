@@ -3,17 +3,19 @@ import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
 from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.mixins.tasks_mixin import TaksMixin
 from kanban_board_tests.constants.task_const import COLUMN_INDICES
 
 logger = logging.getLogger(__name__)
 
 
 
-class TasksPage(BasePage):   
+class TasksPage(BasePage, TaksMixin):   
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
     
     def records_is_missing(self):
@@ -27,10 +29,34 @@ class TasksPage(BasePage):
     
     ##################################
     
-    def get_column_container(self, column_title: str):
-        xpath = TasksLocators.TASKS_CONTAINER.format(column_title=column_title)
-        return (By.XPATH, xpath)
+    # def get_all_status_columns(self):
+    #     column_number = COLUMN_INDICES[status]
+    #     columns = []
+    #     for _, column_number in COLUMN_INDICES:   
+    #         column = self.driver.find_element(*TasksLocators.column_container(column_number))
+    #         columns.append(column)
+        
+    #     return columns
     
+    # def get_all_status_columns(self):
+    #     return self.driver.find_elements(*TasksLocators.STATUS_COLUMNS)
+    
+    def get_all_tasks(self):
+        return self.driver.find_elements(*TasksLocators.TASKS)
+    
+    def wait_for_task_count_change(self, old_count):
+        self.wait.until(lambda d: len(self.get_all_tasks()) != old_count)
+    
+    def get_all_assignees(self):
+        assignees = self.get_options_list(TasksLocators.ASSIGNEE_COMBOBOX)
+        filtered_assignees = [a for a in assignees if a.strip()]
+        return filtered_assignees
+    
+    def get_all_labels(self):
+        labels = self.get_options_list(TasksLocators.LABEL_COMBOBOX)
+        filtered_labels = [l for l in labels if l.strip()]
+        return filtered_labels
+      
     def get_task_list_by_status(self, status):
         column_number = COLUMN_INDICES[status]
         column = self.driver.find_element(*TasksLocators.column_container(column_number))
@@ -70,53 +96,3 @@ class TasksPage(BasePage):
                 break
         return task
     
-    ################################
-    
-    
-    
-    
-    
-
-    
-    def table_parse(self):
-        table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
-        rows = table.find_elements(*TableLocators.ROW)
-
-        parsed_data = []
-        for row in rows:
-            cells = row.find_elements(*TableLocators.CELL)
-            row_data = [cell.text.strip() for cell in cells]
-            status_id, name, slug, created_at = row_data[1:5]
-            
-            parsed_data.append({
-                'id': status_id,
-                'name': name,
-                'slug': slug,
-                'created_at': created_at
-            })
-        return parsed_data
-      
-    def is_record_added(self, status):
-        parsed_records = self.table_parse()
-        return any(
-            r['name'] == status['name']
-            and r['slug'] == status['slug']
-            for r in parsed_records
-        )
-    
-    def click_on_record(self, status_id):       
-        table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
-        rows = table.find_elements(*TableLocators.ROW)
-
-        for row in rows:
-            cells = row.find_elements(*TableLocators.CELL)
-            row_data = [cell.text.strip() for cell in cells]
-            row_status_id, name, slug, _ = row_data[1:]
-            if row_status_id == status_id:
-                row.click()
-                return {
-                    'name': name,
-                    'slug': slug
-                }
-    
-                

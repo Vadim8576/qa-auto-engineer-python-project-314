@@ -5,6 +5,7 @@ import pytest
 import time
 
 from kanban_board_tests.data.tasks import TASK_DATA
+from kanban_board_tests.constants.task_const import COLUMN_INDICES
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.pages.tasks.tasks_page import TasksPage
 from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
@@ -81,7 +82,6 @@ def test_edit_task_success(driver, logged_in_user):
     # Получаем данные из редактируемой карточки
     start_task_data = edit_task_page.get_task_data_from_form()
     
-    
     # Создаем новые данные карточки
     random_assignee = edit_task_page.get_random_assignee_option()
     random_status = edit_task_page.get_random_status_option()
@@ -93,8 +93,7 @@ def test_edit_task_success(driver, logged_in_user):
         'status': random_status
     }     
     
-    logger.info('New data has been created.') 
-    
+    logger.info('New data has been created.')    
     
     # Вводим новые данные в форму и сохраняем
     logger.info('Editing the form.')
@@ -112,13 +111,59 @@ def test_edit_task_success(driver, logged_in_user):
     assert end_task_data == new_task_data, 'The data was not saved.'
     logger.info('The record with the new data has been successfully saved!')
     
+def test_filter_by_status(driver, logged_in_user): 
+    menu = Menu(driver)
+    menu.go_to(menu.PAGES['tasks'])
+ 
+    task_page = TasksPage(driver)
     
+    all_tasks_before = task_page.get_all_tasks()
     
-    # time.sleep(5)
+    for status in COLUMN_INDICES:      
+        logger.info(f'Filter: {status}')
+        task_page.select_status(status)
+        task_page.wait_for_task_count_change(len(all_tasks_before))      
+        all_tasks_after = task_page.get_all_tasks()
+        assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
+        logger.info(f'Filter {status} has triggered.')
+        
+def test_filter_by_assignee(driver, logged_in_user): 
+    menu = Menu(driver)
+    menu.go_to(menu.PAGES['tasks'])
+ 
+    task_page = TasksPage(driver)
     
+    all_tasks_before = task_page.get_all_tasks()
     
+    assignees = task_page.get_all_assignees()
+    logger.info(f'assignees: {assignees}')
     
+    for assignee in assignees:      
+        logger.info(f'Filter: {assignee}')
+        task_page.select_assignee(assignee)
+        task_page.wait_for_task_count_change(len(all_tasks_before))
+        all_tasks_after = task_page.get_all_tasks()
+        assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
+        logger.info(f'Filter {assignee} has triggered.')
+
+def test_filter_by_label(driver, logged_in_user): 
+    menu = Menu(driver)
+    menu.go_to(menu.PAGES['tasks'])
+ 
+    task_page = TasksPage(driver)
     
+    all_tasks_before = task_page.get_all_tasks()
+    
+    labels = task_page.get_all_labels()
+    logger.info(f'labels: {labels}')
+    
+    for label in labels:      
+        logger.info(f'Filter: {label}')
+        task_page.select_label(label)
+        task_page.wait_for_task_count_change(len(all_tasks_before))   
+        all_tasks_after = task_page.get_all_tasks()
+        assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
+        logger.info(f'Filter {label} has triggered.')
       
 '''   
     

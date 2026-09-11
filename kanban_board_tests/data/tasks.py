@@ -8,3 +8,4 @@ TASK_DATA = [
         'description': 'Description of task Test Task 2'
     }
 ]
+
