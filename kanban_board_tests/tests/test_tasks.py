@@ -27,7 +27,7 @@ def test_creation_task(driver, logged_in_user):
     
     assert task_page.is_opened()
     
-    task_page.click_to_create()
+    task_page.click_create()
     logger.info('Button "Create task" pressed')
         
     task_creation = TaskCreationPage(driver)
@@ -37,81 +37,74 @@ def test_creation_task(driver, logged_in_user):
     
     assert 'Create Task' in task_creation.header_text()
     
-    
-    random_option = task_creation.get_random_assignee_option()
-    task_creation.click_to_option(random_option)
-    logger.info(f'Select assignee: {random_option}')
-        
+    # Создаем Task (выбираем исполнителя, статус задачи, вводим title, description)
+    random_assignee = task_creation.get_random_assignee_option()
     random_status = task_creation.get_random_status_option()
-    task_creation.click_to_option(random_status)
+    logger.info(f'Select assignee: {random_assignee}')     
     logger.info(f'Select status: {random_status}')
     
-    task_creation.create(TASK_DATA[0])  
     
+    new_task_data = {
+        'title': TASK_DATA[0]['title'],
+        'description': TASK_DATA[0]['description'],
+        'assignee': random_assignee,
+        'status': random_status
+    }
+    
+    task_creation.set_task_data(new_task_data)
+    
+    
+     
     assert task_creation.get_alert_text() == 'Element created'
     logger.info(f'Task created!')
     
     menu.go_to(menu.PAGES['tasks'])
     
-    task_page.get_task_list_by_status('Published')
+    # Парсим колонку со статусом random_status, в которой создали Task
+    task_list = task_page.get_task_list_by_status(random_status)
+    parse_task_list = task_page.get_parse_task_list(task_list)
     
-    
-    
+    # Проверяем, что карточка с title и description появилась в нужной колонке
+    title, description = TASK_DATA[0]['title'], TASK_DATA[0]['description']
+    assert task_page.has_task(parse_task_list, title, description), 'The created card is not in the required column.'
+    logger.info('The card has been successfully created in the appropriate column.')  
     
 
-    time.sleep(3)
     
     
-    
-'''    
-              
-    new_task_status = TASK_STATUSES[0]
-        
-    task_status_creation.create(new_task_status)
-    logger.info(f'Create user {new_task_status['name']}')
-    
-    menu.go_to(menu.PAGES['task_statuses'])
-        
-    assert task_status_page.is_record_added(new_task_status), f'User {new_task_status['name']} not found'
-    logger.info(f'Task status {new_task_status['name']} added successfully!')
-
-
-def test_task_status_table_is_visibility(driver, logged_in_user):
+def test_edit_task_success(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['task_statuses'])
-    task_status_page = TaskStatusesPage(driver)
-    assert task_status_page.table_loads(), 'Users table not loaded!'
-
-    parsed_records = task_status_page.table_parse()
-    assert len(parsed_records) > 0, 'Task statuses not found!'
-    logger.info('Task statuses table loaded')
-
-    missing_issues = []
-
-    for i, u in enumerate(parsed_records):
-        line_no = i + 1
-
-        name = u.get('name')
-        if not name or (isinstance(name, str) and not name.strip()):
-            missing_issues.append(f"Line {line_no}: missing/empty 'name'")
-
-        slug = u.get('slug')
-        if not slug or (isinstance(slug, str) and not slug.strip()):
-            missing_issues.append(f"Line {line_no}: missing/empty 'slug'")
-
-    if missing_issues:
-        error_msg = "; ".join(missing_issues)
-        assert False, f"Found {len(missing_issues)} data issues:\n{error_msg}"
-    else:
-        logger.info('All required fields are present and non-empty')
-
-
-def test_edit_task_status_success(driver, logged_in_user):
-    menu = Menu(driver)
-    menu.go_to(menu.PAGES['task_statuses'])
-       
-    task_status_page = TaskStatusesPage(driver)
-    task_status_id = task_status_page.get_random_id()
+    menu.go_to(menu.PAGES['tasks'])
+    
+    task_page = TasksPage(driver)
+    edit_task_page = EditTaskPage(driver)
+    
+    # ищем первую карточку для редактирования в одном из столбцов
+    task = task_page.find_first_available_task()
+    task_page.click_edit(task)
+    # Получаем данные из редактируемой карточки
+    start_task_data = edit_task_page.get_task_data_from_form()
+    
+    logger.info(start_task_data)
+    
+    
+    new_task_data = {
+        'title': TASK_DATA[1]['title'],
+        'description': TASK_DATA[1]['description'],
+        
+    }
+    
+    edit_task_page.set_task_data()
+    
+    
+    
+    # time.sleep(5)
+    
+    
+    
+    
+      
+'''   
     
     if task_status_id is None:
         pytest.skip("Cannot run test: no users available in the table.")
@@ -134,6 +127,7 @@ def test_edit_task_status_success(driver, logged_in_user):
     logger.info('Task status data is populated correctly.')
     
     
+  
 # Проверка, что измененные данные сохраняются
 def test_new_task_status_data_saved_success(driver, logged_in_user):
     new_task_status_data = TASK_STATUSES[1]
@@ -182,7 +176,7 @@ def test_remove_task_status_successful(driver, logged_in_user):
     logger.info(f'Select task staus with ID = {task_status_id}')
     
     # Удаляем выделенную запись
-    task_status_page.click_to_delete()
+    task_status_page.click_delete()
     logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
@@ -214,7 +208,7 @@ def test_remove_all_task_statuses_successful(driver, logged_in_user):
     logger.info('Select all task statuses in the table.')
     
     # Удаляем выделенных пользователей
-    task_status_page.click_to_delete()
+    task_status_page.click_delete()
     logger.info('Click to "Delete"')
       
     assert f'{task_statuses_count} elements deleted' in task_status_page.get_alert_text() 

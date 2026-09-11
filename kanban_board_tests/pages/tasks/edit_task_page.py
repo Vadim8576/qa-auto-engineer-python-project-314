@@ -1,35 +1,27 @@
 import logging
 
 from kanban_board_tests.pages.base_page import BasePage
-from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.pages.tasks.tasks_mixin import TaksMixin
 from kanban_board_tests.pages.locators.tasks_locators import (
     TasksLocators,
 )
 
 logger = logging.getLogger(__name__)
 
-class EditTaskPage(BasePage):  
-    def is_opened(self, task_status_id):
-        return f'/task_statuses/{task_status_id}' in self.current_url
+class EditTaskPage(BasePage, TaksMixin):  
+    def is_opened(self, task_id):
+        return f'/tasks/{task_id}' in self.current_url
     
-    def get_task_status_data_from_form(self):
-        name = self.value_of(TaskStatusesLocators.NAME)
-        slug = self.value_of(TaskStatusesLocators.SLUG)
+    def get_task_data_from_form(self):
+        assignee = self.text_of(TasksLocators.ASSIGNEE_COMBOBOX)
+        title = self.text_of(TasksLocators.TITLE)
+        description = self.text_of(TasksLocators.DESCRIPTION)
+        status = self.text_of(TasksLocators.STATUS_COMBOBOX)
         return {
-            'name': name,
-            'slug': slug,
+            'assignee': assignee,
+            'title': title,
+            'description': description,
+            'status': status,
         }
-        
-    def set_task_status_name(self, name):
-        self.type(TaskStatusesLocators.NAME, name)
     
-    def set_task_status_slug(self, slug):
-        self.type(TaskStatusesLocators.SLUG, slug)
     
-    def click_save(self):
-        self.click(TableLocators.SAVE_BUTTON)
-        
-    def set_task_status_data(self, new_task_status_data):
-        self.set_task_status_name(new_task_status_data['name'])
-        self.set_task_status_slug(new_task_status_data['slug'])
-        self.click_save()

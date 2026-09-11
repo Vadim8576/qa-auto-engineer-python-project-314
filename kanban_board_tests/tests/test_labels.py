@@ -18,7 +18,7 @@ def test_creation_label(driver, logged_in_user):
     labels_page = LabelsPage(driver)
     assert labels_page.is_opened()
         
-    labels_page.click_to_create()
+    labels_page.click_create()
     logger.info('Button "Create label" pressed')
         
     label_creation = LabelCreationPage(driver)
@@ -134,7 +134,7 @@ def test_remove_label_successful(driver, logged_in_user):
     logger.info(f'Select label with ID = {label_id}')
     
     # Удаляем выделенного пользователя
-    labels_page.click_to_delete()
+    labels_page.click_delete()
     logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
@@ -165,7 +165,7 @@ def test_remove_all_labels_successful(driver, logged_in_user):
     logger.info('Select all labels in the table.')
     
     # Удаляем выделенну метки
-    labels_page.click_to_delete()
+    labels_page.click_delete()
     logger.info('Click to "Delete"')
       
     assert f'{labels_count} elements deleted' in labels_page.get_alert_text() 

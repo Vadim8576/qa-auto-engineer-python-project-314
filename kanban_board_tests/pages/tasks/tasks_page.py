@@ -1,12 +1,17 @@
 import logging
+import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
+from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
 from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.constants.task_const import COLUMN_INDICES
 
 logger = logging.getLogger(__name__)
+
+
 
 class TasksPage(BasePage):   
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
@@ -22,26 +27,54 @@ class TasksPage(BasePage):
     
     ##################################
     
-    def get_column_container_xpath(self, column_title):
-        return (By.XPATH, f'//h6[normalize-space()="{column_title}"]/../*[2]')
+    def get_column_container(self, column_title: str):
+        xpath = TasksLocators.TASKS_CONTAINER.format(column_title=column_title)
+        return (By.XPATH, xpath)
     
     def get_task_list_by_status(self, status):
-        draft_container = self.driver.find_element(*self.get_column_container_xpath(status))
-        tasks = draft_container.find_elements(By.CSS_SELECTOR, 'div[role="button"]')
+        column_number = COLUMN_INDICES[status]
+        column = self.driver.find_element(*TasksLocators.column_container(column_number))
+        tasks = column.find_elements(*TasksLocators.TASK) 
+        return tasks
+
+    def get_parse_task_list(self, task_list):
+        parse_tasks = []
+        for task in task_list:
+            title = task.find_elements(*TasksLocators.CARD_TITLE)[0]
+            description = task.find_elements(*TasksLocators.CARD_DESCRIPTION)[0]
+            parse_tasks.append({
+                'title': title.text,
+                'description': description.text
+            })
+        return parse_tasks
+
+    def has_task(self, tasks, title, description):
+        return any(
+            t['title'] == title and t['description'] == description
+            for t in tasks
+        )
+    
+    
+    def click_edit(self, task):
+        edit_button = task.find_element(*TasksLocators.EDIT_BUTTON)
+        edit_button.click()
         
-        logger.info(len(tasks))
+        
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    def find_first_available_task(self):
+        task = None
+        for column_status in COLUMN_INDICES:
+            task_list = self.get_task_list_by_status(column_status)
+            if len(task_list) > 0:
+                task = task_list[0]
+                break
+        return task
     
     ################################
+    
+    
+    
+    
     
 
     

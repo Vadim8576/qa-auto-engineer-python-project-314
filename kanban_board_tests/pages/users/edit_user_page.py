@@ -30,9 +30,6 @@ class EditUserPage(BasePage):
     
     def set_user_last_name(self, last_name):
         self.type(UserLocators.LAST_NAME, last_name)
-    
-    def click_save(self):
-        self.click(TableLocators.SAVE_BUTTON)
         
     def set_user_data(self, new_user_data):
         self.set_user_email(new_user_data['email'])

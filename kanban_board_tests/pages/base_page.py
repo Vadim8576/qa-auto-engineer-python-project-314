@@ -35,8 +35,7 @@ class BasePage:
         el.click()
 
     def type(self, locator, text):
-        el = self.wait.until(EC.visibility_of_element_located(locator))
-           
+        el = self.wait.until(EC.visibility_of_element_located(locator))         
         el.send_keys(Keys.CONTROL, 'a')
         el.send_keys(Keys.DELETE)
         el.send_keys(text)
@@ -66,11 +65,14 @@ class BasePage:
         self.wait_alert_invisibility()
         return text
 
-    def click_to_create(self):
+    def click_create(self):
         self.click(TableLocators.CREATE_BUTTON)
     
-    def click_to_delete(self):
+    def click_delete(self):
         self.click(TableLocators.DELETE_BUTTON)
+    
+    def click_save(self):
+        self.click(TableLocators.SAVE_BUTTON)
 
     def get_random_id(self):
         records = self.table_parse()
@@ -94,21 +96,4 @@ class BasePage:
         checkbox = head.find_element(*TableLocators.CHECKBOX)
         checkbox.click()
 
-    def click_to_dropdown(self, selector):
-        trigger = self.driver.find_element(*selector)
-
-        self.wait.until(lambda d: trigger.is_displayed() and trigger.is_enabled())
-        try:
-            trigger.click()
-        except Exception:
-            self.driver.execute_script('arguments[0].click();', trigger)
-        # time.sleep(1)           
-        
     
-    def click_to_option(self, option_text):
-        
-        option = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, f"//li[normalize-space()='{option_text}']"))
-        )
-        option.click()  
-        # time.sleep(1)

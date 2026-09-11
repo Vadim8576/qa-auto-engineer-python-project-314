@@ -23,7 +23,7 @@ def test_creation_task_status(driver, logged_in_user):
     
     assert task_status_page.is_opened()
     
-    task_status_page.click_to_create()
+    task_status_page.click_create()
     logger.info('Button "Create task status" pressed')
         
     task_status_creation = TaskStatusCreationPage(driver)
@@ -147,7 +147,7 @@ def test_remove_task_status_successful(driver, logged_in_user):
     logger.info(f'Select task staus with ID = {task_status_id}')
     
     # Удаляем выделенную запись
-    task_status_page.click_to_delete()
+    task_status_page.click_delete()
     logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
@@ -179,7 +179,7 @@ def test_remove_all_task_statuses_successful(driver, logged_in_user):
     logger.info('Select all task statuses in the table.')
     
     # Удаляем выделенных пользователей
-    task_status_page.click_to_delete()
+    task_status_page.click_delete()
     logger.info('Click to "Delete"')
       
     assert f'{task_statuses_count} elements deleted' in task_status_page.get_alert_text() 

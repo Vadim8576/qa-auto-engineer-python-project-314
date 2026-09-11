@@ -18,9 +18,6 @@ class EditLabelPage(BasePage):
     
     def set_label_name(self, name):
         self.type(LabelsLocators.NAME, name)
-    
-    def click_save(self):
-        self.click(TableLocators.SAVE_BUTTON)
         
     def set_label_data(self, new_label_data):
         self.set_label_name(new_label_data)

@@ -25,9 +25,6 @@ class EditTaskStatusesPage(BasePage):
     
     def set_task_status_slug(self, slug):
         self.type(TaskStatusesLocators.SLUG, slug)
-    
-    def click_save(self):
-        self.click(TableLocators.SAVE_BUTTON)
         
     def set_task_status_data(self, new_task_status_data):
         self.set_task_status_name(new_task_status_data['name'])

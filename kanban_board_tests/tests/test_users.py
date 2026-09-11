@@ -19,7 +19,7 @@ def test_creation_user(driver, logged_in_user):
     users_page = UsersPage(driver)
     assert users_page.is_opened()
         
-    users_page.click_to_create()
+    users_page.click_create()
     logger.info('Button "Create user" pressed')
         
     user_creation = UserCreationPage(driver)
@@ -174,7 +174,7 @@ def test_remove_user_successful(driver, logged_in_user):
     logger.info(f'Select user with ID = {user_id}')
     
     # Удаляем выделенного пользователя
-    users_page.click_to_delete()
+    users_page.click_delete()
     logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
@@ -207,7 +207,7 @@ def test_remove_all_users_successful(driver, logged_in_user):
     logger.info('Select all users in the table.')
     
     # Удаляем выделенных пользователей
-    users_page.click_to_delete()
+    users_page.click_delete()
     logger.info('Click to "Delete"')
       
     assert f'{users_count} elements deleted' in users_page.get_alert_text() 
