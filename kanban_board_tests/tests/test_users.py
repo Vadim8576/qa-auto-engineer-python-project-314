@@ -13,35 +13,37 @@ from kanban_board_tests.pages.users.users_page import UsersPage
 logger = logging.getLogger(__name__)
 
 def test_creation_user(pages, logged_in_user):
-    logger.info('Test creation user')
     menu = pages(Menu)
+    users_page = pages(UsersPage)
+    user_creation = pages(UserCreationPage)
+
     menu.go_to(MENU_LABELS['users'])
         
-    users_page = pages(UsersPage)
     assert users_page.is_opened()
         
     users_page.click_create()
     logger.info('Button "Create user" pressed')
         
-    user_creation = pages(UserCreationPage)
     user_creation.is_opened()
     assert 'Create User' in user_creation.header_text()
               
-    user = USERS_DATA[0]
+    new_user = USERS_DATA[0]
         
-    user_creation.set_user_data(user)
-    logger.info(f'Create user {user['first_name']}')
+    user_creation.set_user_data(new_user)
+    logger.info(f'Create user {new_user['first_name']}')
     
     menu.go_to(MENU_LABELS['users'])
         
-    assert users_page.is_record_added(user), f'User {user['first_name']} not found'
-    logger.info(f'User {user['first_name']} added successfully!')
+    assert users_page.is_record_added(new_user), f'User {new_user['first_name']} not found'
+    logger.info(f'User {new_user['first_name']} added successfully!')
 
 
 def test_users_table_is_visibility(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['users'])
     users_page = pages(UsersPage)
+
+    menu.go_to(MENU_LABELS['users'])
+
     assert users_page.table_loads(), 'Users table not loaded!'
 
     parsed_records = users_page.table_parse()
@@ -74,9 +76,10 @@ def test_users_table_is_visibility(pages, logged_in_user):
 
 def test_edit_user_success(pages, logged_in_user):
     menu = pages(Menu)
+    users_page = pages(UsersPage)
+
     menu.go_to(MENU_LABELS['users'])
        
-    users_page = pages(UsersPage)
     user_id = users_page.get_random_id()
     
     if user_id is None:
@@ -100,14 +103,12 @@ def test_edit_user_success(pages, logged_in_user):
     
     
 def test_new_user_data_saved_success(pages, logged_in_user):
-    new_user_data = USERS_DATA[1]
-    
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['users'])
-       
     users_page = pages(UsersPage)
     edit_user_page = pages(EditUserPage)
     
+    menu.go_to(MENU_LABELS['users'])
+
     user_id = users_page.get_random_id()
     
     # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
@@ -115,6 +116,7 @@ def test_new_user_data_saved_success(pages, logged_in_user):
     
     logger.info(f'Click to user with ID {user_id}: {user_data['email']} {user_data['first_name']} {user_data['last_name']}')
     
+    new_user_data = USERS_DATA[1]
     # Ввод новых данных и нажатие "сохранить"
     edit_user_page.set_user_data(new_user_data)
     
@@ -128,15 +130,16 @@ def test_new_user_data_saved_success(pages, logged_in_user):
 @pytest.mark.parametrize('incorrect_email', INCORRECT_EMAILS)
 def test_email_validation(pages, logged_in_user, incorrect_email):
     menu = pages(Menu)
+    users_page = pages(UsersPage)
+    edit_user_page = pages(EditUserPage)
+
     menu.go_to(MENU_LABELS['users'])
       
-    users_page = pages(UsersPage)
     user_id = users_page.get_random_id()
     
     # Выбор пользователя для редактирования
     users_page.click_on_record(user_id)
     
-    edit_user_page = pages(EditUserPage)
     logger.info(edit_user_page.current_url)
      
     logger.info(f'Input email: {incorrect_email}')
@@ -155,10 +158,10 @@ def test_email_validation(pages, logged_in_user, incorrect_email):
 
 def test_remove_user_successful(pages, logged_in_user):  
     menu = pages(Menu)
+    users_page = pages(UsersPage)
+
     menu.go_to(MENU_LABELS['users'])
       
-    users_page = pages(UsersPage)
-    
     # Парсим таблицу
     users_before_deletion = users_page.table_parse()
     users_before_deletion_count = len(users_before_deletion)
@@ -169,6 +172,7 @@ def test_remove_user_successful(pages, logged_in_user):
         pytest.skip("Cannot run test: no users available in the table.")
       
     user_id = users_page.get_random_id()
+
     # Получаем данные выделенного пользователя
     selected_user = users_page.select_record(user_id)
     logger.info(f'Select user with ID = {user_id}')
@@ -197,9 +201,10 @@ def test_remove_user_successful(pages, logged_in_user):
 
 def test_remove_all_users_successful(pages, logged_in_user):
     menu = pages(Menu)
+    users_page = pages(UsersPage)
+    
     menu.go_to(MENU_LABELS['users'])
       
-    users_page = pages(UsersPage)
     users = users_page.table_parse()
     users_count = len(users)
     

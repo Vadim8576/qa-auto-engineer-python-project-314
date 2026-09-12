@@ -13,16 +13,15 @@ logger = logging.getLogger(__name__)
 
 def test_creation_task(pages, logged_in_user):
     menu = pages(Menu)
+    task_page = pages(TasksPage)
+    task_creation = pages(TaskCreationPage)
+
     menu.go_to(MENU_LABELS['tasks'])
         
-    task_page = pages(TasksPage)
-    
     assert task_page.is_opened()
     
     task_page.click_create()
     logger.info('Button "Create task" pressed')
-        
-    task_creation = pages(TaskCreationPage)
     
     assert task_creation.is_opened()
     logger.info('The task creation page is open')
@@ -34,8 +33,7 @@ def test_creation_task(pages, logged_in_user):
     random_status = task_creation.get_random_status_option()
     logger.info(f'Select assignee: {random_assignee}')     
     logger.info(f'Select status: {random_status}')
-    
-    
+     
     new_task_data = {
         'title': TASK_DATA[0]['title'],
         'description': TASK_DATA[0]['description'],
@@ -61,10 +59,10 @@ def test_creation_task(pages, logged_in_user):
     
 def test_edit_task_success(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['tasks'])
-    
     task_page = pages(TasksPage)
     edit_task_page = pages(EditTaskPage)
+
+    menu.go_to(MENU_LABELS['tasks'])
     
     # ищем первую карточку для редактирования в одном из столбцов
     task = task_page.find_first_available_task()
@@ -82,9 +80,7 @@ def test_edit_task_success(pages, logged_in_user):
         'description': TASK_DATA[1]['description'],
         'assignee': random_assignee,
         'status': random_status
-    }     
-    
-    logger.info('New data has been created.')    
+    }        
     
     # Вводим новые данные в форму и сохраняем
     logger.info('Editing the form.')
@@ -104,9 +100,9 @@ def test_edit_task_success(pages, logged_in_user):
     
 def test_filter_by_status(pages, logged_in_user): 
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['tasks'])
- 
     task_page = pages(TasksPage)
+
+    menu.go_to(MENU_LABELS['tasks'])
     
     all_tasks_before = task_page.get_all_tasks()
     
@@ -120,10 +116,10 @@ def test_filter_by_status(pages, logged_in_user):
         
 def test_filter_by_assignee(pages, logged_in_user): 
     menu = pages(Menu)
+    task_page = pages(TasksPage)
+
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = pages(TasksPage)
-    
     all_tasks_before = task_page.get_all_tasks()
     
     assignees = task_page.get_all_assignees()
@@ -139,10 +135,10 @@ def test_filter_by_assignee(pages, logged_in_user):
 
 def test_filter_by_label(pages, logged_in_user): 
     menu = pages(Menu)
+    task_page = pages(TasksPage)
+
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = pages(TasksPage)
-    
     all_tasks_before = task_page.get_all_tasks()
     
     labels = task_page.get_all_labels()
@@ -158,9 +154,10 @@ def test_filter_by_label(pages, logged_in_user):
 
 def test_all_tasks_visability_and_clickable(pages, logged_in_user):
     menu = pages(Menu)
+    task_page = pages(TasksPage)
+    
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = pages(TasksPage)
     logger.info('Checking if all tasks have been loaded.')
     assert task_page.are_all_tasks_visible()
     assert task_page.are_all_tasks_clickable()

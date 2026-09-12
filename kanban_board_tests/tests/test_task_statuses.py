@@ -16,18 +16,17 @@ from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatus
 logger = logging.getLogger(__name__)
 
 def test_creation_task_status(pages, logged_in_user):
-
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
-        
     task_status_page = pages(TaskStatusesPage)
-                               
+    task_status_creation = pages(TaskStatusCreationPage)
+
+    menu.go_to(MENU_LABELS['task_statuses'])
+                                     
     assert task_status_page.is_opened()
     
     task_status_page.click_create()
     logger.info('Button "Create task status" pressed')
         
-    task_status_creation = pages(TaskStatusCreationPage)
     task_status_creation.is_opened()
     assert 'Create Task status' in task_status_creation.header_text()
               
@@ -44,8 +43,10 @@ def test_creation_task_status(pages, logged_in_user):
 
 def test_task_status_table_is_visibility(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
     task_status_page = pages(TaskStatusesPage)
+
+    menu.go_to(MENU_LABELS['task_statuses'])
+
     assert task_status_page.table_loads(), 'Users table not loaded!'
 
     parsed_records = task_status_page.table_parse()
@@ -74,9 +75,11 @@ def test_task_status_table_is_visibility(pages, logged_in_user):
 
 def test_edit_task_status_success(pages, logged_in_user):
     menu = pages(Menu)
+    task_status_page = pages(TaskStatusesPage)
+    edit_task_status_page = pages(EditTaskStatusesPage)
+
     menu.go_to(MENU_LABELS['task_statuses'])
        
-    task_status_page = pages(TaskStatusesPage)
     task_status_id = task_status_page.get_random_id()
     
     if task_status_id is None:
@@ -86,9 +89,7 @@ def test_edit_task_status_success(pages, logged_in_user):
     
     selected_task_status = task_status_page.click_on_record(task_status_id)
     logger.info(f'Click to task status with ID {task_status_id}: {selected_task_status['name']} {selected_task_status['slug']}')
-
-    edit_task_status_page = pages(EditTaskStatusesPage)
-    
+  
     assert edit_task_status_page.is_opened(task_status_id), f'Expected edit page for task status {task_status_id}, but condition is False'
     logger.info(f'Open edit page task status {task_status_id}')
     
@@ -102,19 +103,18 @@ def test_edit_task_status_success(pages, logged_in_user):
     
 # Проверка, что измененные данные сохраняются
 def test_new_task_status_data_saved_success(pages, logged_in_user):
-    new_task_status_data = TASK_STATUSES[1]
-    
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
-       
     task_status_page = pages(TaskStatusesPage)
     edit_task_status_page = pages(EditTaskStatusesPage)
     
+    menu.go_to(MENU_LABELS['task_statuses'])
+
     task_status_id = task_status_page.get_random_id()
     
     # Получение данных из таблицы, на которого нажали, так же переход на редактирование
     task_status_page.click_on_record(task_status_id)
     
+    new_task_status_data = TASK_STATUSES[1]
     logger.info(f'Click to task status with ID {task_status_id}: {new_task_status_data['name']} {new_task_status_data['slug']}')
     
     # Ввод новых данных и нажатие "сохранить"
@@ -129,9 +129,9 @@ def test_new_task_status_data_saved_success(pages, logged_in_user):
 
 def test_remove_task_status_successful(pages, logged_in_user):  
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
-       
     task_status_page = pages(TaskStatusesPage)
+       
+    menu.go_to(MENU_LABELS['task_statuses'])
     
     # Парсим таблицу
     task_statuses_before_deletion = task_status_page.table_parse()
@@ -170,9 +170,10 @@ def test_remove_task_status_successful(pages, logged_in_user):
 
 def test_remove_all_task_statuses_successful(pages, logged_in_user):
     menu = pages(Menu)
+    task_status_page = pages(TaskStatusesPage)
+    
     menu.go_to(MENU_LABELS['task_statuses'])
        
-    task_status_page = pages(TaskStatusesPage)
     task_statuses = task_status_page.table_parse()
     task_statuses_count = len(task_statuses)
     

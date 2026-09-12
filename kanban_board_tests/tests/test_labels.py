@@ -12,35 +12,35 @@ from kanban_board_tests.pages.menu_component import Menu
 logger = logging.getLogger(__name__)
 
 def test_creation_label(pages, logged_in_user):
-    logger.info('Test creation label')
     menu = pages(Menu)
+    labels_page = pages(LabelsPage)
+    label_creation = pages(LabelCreationPage)
+
     menu.go_to(MENU_LABELS['labels'])
         
-    labels_page = pages(LabelsPage)
     assert labels_page.is_opened()
         
     labels_page.click_create()
     logger.info('Button "Create label" pressed')
         
-    label_creation = pages(LabelCreationPage)
     label_creation.is_opened()
     assert 'Create Label' in label_creation.header_text()
               
-    label = LABELS_DATA[0]
-        
-    label_creation.set_label_data(label)
-    logger.info(f'Create label {label}')
+    new_label = LABELS_DATA[0]     
+    label_creation.set_label_data(new_label)
+    logger.info(f'Create label {new_label}')
     
     menu.go_to(MENU_LABELS['labels'])
         
-    assert labels_page.is_record_added(label), f'Label {label} not found'
-    logger.info(f'Label {label} added successfully!')
+    assert labels_page.is_record_added(new_label), f'Label {new_label} not found'
+    logger.info(f'Label {new_label} added successfully!')
 
 
 def test_labels_table_is_visibility(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['labels'])
     labels_page = pages(LabelsPage)
+
+    menu.go_to(MENU_LABELS['labels'])
     assert labels_page.table_loads(), 'Labels table not loaded!'
 
     parsed_records = labels_page.table_parse()
@@ -65,8 +65,10 @@ def test_labels_table_is_visibility(pages, logged_in_user):
 
 def test_edit_user_success(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['labels'])
     labels_page = pages(LabelsPage)
+    edit_label_page = pages(EditLabelPage)
+
+    menu.go_to(MENU_LABELS['labels'])
     label_id = labels_page.get_random_id()
     
     if label_id is None:
@@ -76,9 +78,7 @@ def test_edit_user_success(pages, logged_in_user):
     
     selected_label = labels_page.click_on_record(label_id)
     logger.info(f'Click to label with ID {label_id}: {selected_label['name']}')
-
     
-    edit_label_page = pages(EditLabelPage)
     assert edit_label_page.is_opened(label_id), f'Expected edit page for label {label_id}, but condition is False'
     logger.info(f'Open edit page label {label_id}')
     
@@ -91,12 +91,12 @@ def test_edit_user_success(pages, logged_in_user):
     
 
 def test_new_label_data_saved_success(pages, logged_in_user):
-    new_label_data = LABELS_DATA[1]
-    
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['labels'])
     labels_page = pages(LabelsPage)
     edit_label_page = pages(EditLabelPage)
+
+    menu.go_to(MENU_LABELS['labels'])
+
     label_id = labels_page.get_random_id()
        
     # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
@@ -104,6 +104,7 @@ def test_new_label_data_saved_success(pages, logged_in_user):
     
     logger.info(f'Click to label with ID {label_id}: {label_data}')
     
+    new_label_data = LABELS_DATA[1]
     # Ввод новых данных и нажатие "сохранить"
     edit_label_page.set_label_data(new_label_data)
     
@@ -116,9 +117,10 @@ def test_new_label_data_saved_success(pages, logged_in_user):
 
 def test_remove_label_successful(pages, logged_in_user):  
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['labels'])
     labels_page = pages(LabelsPage)
     
+    menu.go_to(MENU_LABELS['labels'])
+
     # Парсим таблицу
     labels_before_deletion = labels_page.table_parse()
     labels_before_deletion_count = len(labels_before_deletion)
@@ -155,8 +157,9 @@ def test_remove_label_successful(pages, logged_in_user):
 
 def test_remove_all_labels_successful(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['labels'])
     labels_page = pages(LabelsPage)
+    
+    menu.go_to(MENU_LABELS['labels'])
     
     labels = labels_page.table_parse()
     labels_count = len(labels)
