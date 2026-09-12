@@ -25,7 +25,6 @@ class TasksLocators:
     STATUS_COLUMNS = (By.CSS_SELECTOR, '[data-rfd-droppable-id]')
     TASKS = (By.CSS_SELECTOR, '[data-rfd-draggable-id]')
     
-    
     @staticmethod
     def column_container(column_number):
         return (By.CSS_SELECTOR, f'[data-rfd-droppable-id="{column_number}"]')

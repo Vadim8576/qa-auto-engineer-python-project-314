@@ -1,7 +1,5 @@
 import random
-import time
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.locators.tasks_locators import (
@@ -28,23 +26,17 @@ class TaksMixin:
         self.click_to_dropdown(TasksLocators.LABEL_COMBOBOX)
         self.click_to_option(option)
         
-    def set_task_data(self, new_task_data):
-        self.set_task_title(new_task_data['title'])
-        self.set_task_description(new_task_data['description'])
-        self.select_assignee(new_task_data['assignee'])
-        self.select_status(new_task_data['status'])
+    def set_task_data(self, task_data):
+        self.set_task_title(task_data['title'])
+        self.set_task_description(task_data['description'])
+        self.select_assignee(task_data['assignee'])
+        self.select_status(task_data['status'])
         self.click_save()
     
     def get_options_list(self, locator):
         self.click_to_dropdown(locator)
-        presentaion = self.wait.until(EC.visibility_of_element_located(TasksLocators.PRESENTATION))
-        menu = self.wait.until(EC.visibility_of_element_located(TasksLocators.LISTBOX))
-        options = self.wait.until(EC.presence_of_all_elements_located(TasksLocators.LISTBOX_OPTION))
-        
-        options_list = []
-        for option in options:
-            options_list.append(option.text)
-        return options_list
+        options = self.wait.until(EC.presence_of_all_elements_located(TasksLocators.LISTBOX_OPTION))   
+        return [option.text.strip() for option in options]
     
     def get_random_option(self, locator):
         options = self.get_options_list(locator)
@@ -63,7 +55,7 @@ class TaksMixin:
     def click_to_dropdown(self, selector):
         trigger = self.driver.find_element(*selector)
 
-        self.wait.until(lambda d: trigger.is_displayed() and trigger.is_enabled())
+        self.wait.until(lambda _: trigger.is_displayed() and trigger.is_enabled())
         try:
             trigger.click()
         except Exception:

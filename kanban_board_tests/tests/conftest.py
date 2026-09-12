@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.options import Options
 
 from kanban_board_tests.pages.login.login_page import LoginPage
 
-# --- Вычисляем абсолютные пути относительно conftest.py ---
+# Вычисляем абсолютные пути относительно conftest.py
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 LOG_DIR = os.path.join(BASE_DIR, 'logs')

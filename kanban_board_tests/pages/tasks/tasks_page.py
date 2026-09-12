@@ -1,8 +1,6 @@
 import logging
-import time
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
 from kanban_board_tests.pages.base_page import BasePage
