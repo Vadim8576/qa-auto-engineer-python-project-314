@@ -1,23 +1,23 @@
 import logging
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.mixins.table_mixin import TableMixin
 from kanban_board_tests.pages.locators.table_locators import TableLocators
+from kanban_board_tests.pages.locators.users_locators import UserLocators
 
 logger = logging.getLogger(__name__)
 
 class UsersPage(BasePage, TableMixin):
-    NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Users yet')]")
     
+    PATH = '/users'
     def records_is_missing(self):
-        elements = self.driver.find_elements(*self.NO_RECORDS_MESSAGE)
+        elements = self.driver.find_elements(*UserLocators.NO_RECORDS_MESSAGE)
         return len(elements) > 0
     
     def is_opened(self):
-        return '/users' in self.current_url
+        return self.PATH in self.current_url
     
     def table_parse(self):
         table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))

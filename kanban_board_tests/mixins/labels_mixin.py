@@ -12,6 +12,9 @@ from kanban_board_tests.pages.locators.table_locators import (
 )
 
 class LabelsMixin:
-    def create(self, label_data):
-        self.type(LabelsLocators.NAME, label_data)
-        self.click(TableLocators.SAVE_BUTTON)
+    def set_label_name(self, name):
+            self.type(LabelsLocators.NAME, name)
+            
+    def set_label_data(self, new_label_data):
+        self.set_label_name(new_label_data)
+        self.click_save()

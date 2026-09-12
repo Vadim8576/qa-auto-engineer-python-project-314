@@ -5,9 +5,10 @@ from kanban_board_tests.mixins.tasks_mixin import TaksMixin
 
 logger = logging.getLogger(__name__)
 
-class TaskCreationPage(BasePage, TaksMixin):  
+class TaskCreationPage(BasePage, TaksMixin):
+    PATH = '/tasks/create'
     def is_opened(self):
-        return '/tasks/create' in self.current_url
+        return self.PATH in self.current_url
         
     
 

@@ -3,6 +3,7 @@ import logging
 import pytest
 
 from kanban_board_tests.data.labels import LABELS_DATA
+from kanban_board_tests.constants.menu_consts import MENU_LABELS
 from kanban_board_tests.pages.labels.edit_label_page import EditLabelPage
 from kanban_board_tests.pages.labels.label_creation_page import LabelCreationPage
 from kanban_board_tests.pages.labels.labels_page import LabelsPage
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 def test_creation_label(driver, logged_in_user):
     logger.info('Test creation label')
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
         
     labels_page = LabelsPage(driver)
     assert labels_page.is_opened()
@@ -27,10 +28,10 @@ def test_creation_label(driver, logged_in_user):
               
     label = LABELS_DATA[0]
         
-    label_creation.create(label)
+    label_creation.set_label_data(label)
     logger.info(f'Create label {label}')
     
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
         
     assert labels_page.is_record_added(label), f'Label {label} not found'
     logger.info(f'Label {label} added successfully!')
@@ -38,7 +39,7 @@ def test_creation_label(driver, logged_in_user):
 
 def test_labels_table_is_visibility(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
     labels_page = LabelsPage(driver)
     assert labels_page.table_loads(), 'Labels table not loaded!'
 
@@ -64,7 +65,7 @@ def test_labels_table_is_visibility(driver, logged_in_user):
 
 def test_edit_user_success(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
     labels_page = LabelsPage(driver)
     label_id = labels_page.get_random_id()
     
@@ -94,7 +95,7 @@ def test_new_label_data_saved_success(driver, logged_in_user):
     new_label_data = LABELS_DATA[1]
     
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
     labels_page = LabelsPage(driver)
     edit_label_page = EditLabelPage(driver)
     label_id = labels_page.get_random_id()
@@ -116,7 +117,7 @@ def test_new_label_data_saved_success(driver, logged_in_user):
 
 def test_remove_label_successful(driver, logged_in_user):  
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
     labels_page = LabelsPage(driver)
     
     # Парсим таблицу
@@ -155,7 +156,7 @@ def test_remove_label_successful(driver, logged_in_user):
 
 def test_remove_all_labels_successful(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['labels'])
+    menu.go_to(MENU_LABELS['labels'])
     labels_page = LabelsPage(driver)
     
     labels = labels_page.table_parse()

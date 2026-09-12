@@ -5,7 +5,8 @@ import pytest
 import time
 
 from kanban_board_tests.data.tasks import TASK_DATA
-from kanban_board_tests.constants.task_const import COLUMN_INDICES
+from kanban_board_tests.constants.task_consts import COLUMN_INDICES
+from kanban_board_tests.constants.menu_consts import MENU_LABELS
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.pages.tasks.tasks_page import TasksPage
 from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 def test_creation_task(driver, logged_in_user):
 
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
         
     task_page = TasksPage(driver)
     
@@ -54,7 +55,7 @@ def test_creation_task(driver, logged_in_user):
     assert task_creation.get_alert_text() == 'Element created'
     logger.info(f'Task created!')
     
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
     
     # Парсим колонку со статусом random_status, в которой создали Task
     task_list = task_page.get_task_list_by_status(random_status)
@@ -70,7 +71,7 @@ def test_creation_task(driver, logged_in_user):
     
 def test_edit_task_success(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
     
     task_page = TasksPage(driver)
     edit_task_page = EditTaskPage(driver)
@@ -113,7 +114,7 @@ def test_edit_task_success(driver, logged_in_user):
     
 def test_filter_by_status(driver, logged_in_user): 
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
  
     task_page = TasksPage(driver)
     
@@ -129,7 +130,7 @@ def test_filter_by_status(driver, logged_in_user):
         
 def test_filter_by_assignee(driver, logged_in_user): 
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
  
     task_page = TasksPage(driver)
     
@@ -148,7 +149,7 @@ def test_filter_by_assignee(driver, logged_in_user):
 
 def test_filter_by_label(driver, logged_in_user): 
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
  
     task_page = TasksPage(driver)
     
@@ -167,7 +168,7 @@ def test_filter_by_label(driver, logged_in_user):
 
 def test_all_tasks_visability_and_clickable(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['tasks'])
+    menu.go_to(MENU_LABELS['tasks'])
  
     task_page = TasksPage(driver)
     logger.info('Checking if all tasks have been loaded.')
@@ -205,7 +206,7 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     new_task_status_data = TASK_STATUSES[1]
     
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['task_statuses'])
+    menu.go_to(MENU_LABELS['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     edit_task_status_page = EditTaskStatusesPage(driver)
@@ -229,7 +230,7 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
 
 def test_remove_task_status_successful(driver, logged_in_user):  
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['task_statuses'])
+    menu.go_to(MENU_LABELS['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     
@@ -270,7 +271,7 @@ def test_remove_task_status_successful(driver, logged_in_user):
 
 def test_remove_all_task_statuses_successful(driver, logged_in_user):
     menu = Menu(driver)
-    menu.go_to(menu.PAGES['task_statuses'])
+    menu.go_to(MENU_LABELS['task_statuses'])
        
     task_status_page = TaskStatusesPage(driver)
     task_statuses = task_status_page.table_parse()

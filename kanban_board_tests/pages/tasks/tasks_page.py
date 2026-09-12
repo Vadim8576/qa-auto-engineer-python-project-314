@@ -3,31 +3,24 @@ import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
-from kanban_board_tests.pages.locators.table_locators import TableLocators
 from kanban_board_tests.mixins.tasks_mixin import TaksMixin
-from kanban_board_tests.constants.task_const import COLUMN_INDICES
+from kanban_board_tests.constants.task_consts import COLUMN_INDICES
 
 logger = logging.getLogger(__name__)
 
-
-
 class TasksPage(BasePage, TaksMixin):   
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
-    
+    PATH = '/tasks'
     def records_is_missing(self):
         elements = self.driver.find_elements(*self.NO_RECORDS_MESSAGE)
         return len(elements) > 0
     
     def is_opened(self):
-        return '/tasks' in self.current_url
-    
-    # def get_all_status_columns(self):
-    #     return self.driver.find_elements(*TasksLocators.STATUS_COLUMNS)
+        return self.PATH in self.current_url
     
     def are_all_tasks_visible(self):
         def all_visible(driver):
@@ -67,10 +60,8 @@ class TasksPage(BasePage, TaksMixin):
         except TimeoutException:
             return False
     
-    
     def get_all_tasks(self):
         return self.driver.find_elements(*TasksLocators.TASKS)
-    
     
     def wait_for_task_count_change(self, old_count):
         self.wait.until(lambda d: len(self.get_all_tasks()) != old_count)

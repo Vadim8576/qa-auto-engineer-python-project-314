@@ -5,21 +5,20 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.table_locators import TableLocators
-from kanban_board_tests.mixins.labels_mixin import LabelsMixin
+from kanban_board_tests.pages.locators.labels_locators import LabelsLocators
 from kanban_board_tests.mixins.table_mixin import TableMixin
 
 
 logger = logging.getLogger(__name__)
 
 class LabelsPage(BasePage, TableMixin):  
-    NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Labels yet')]")
-    
+    PATH = '/labels'
     def records_is_missing(self):
-        elements = self.driver.find_elements(*self.NO_RECORDS_MESSAGE)
+        elements = self.driver.find_elements(*LabelsLocators.NO_RECORDS_MESSAGE)
         return len(elements) > 0
 
     def is_opened(self):
-        return '/labels' in self.current_url
+        return self.PATH in self.current_url
     
     def table_parse(self):
         table = self.wait.until(EC.visibility_of_element_located(TableLocators.TABLE))
