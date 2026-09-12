@@ -1,9 +1,5 @@
 import logging
 
-import pytest
-
-import time
-
 from kanban_board_tests.data.tasks import TASK_DATA
 from kanban_board_tests.constants.task_consts import COLUMN_INDICES
 from kanban_board_tests.constants.menu_consts import MENU_LABELS
@@ -15,19 +11,18 @@ from kanban_board_tests.pages.tasks.task_creation_page import TaskCreationPage
 
 logger = logging.getLogger(__name__)
 
-def test_creation_task(driver, logged_in_user):
-
-    menu = Menu(driver)
+def test_creation_task(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['tasks'])
         
-    task_page = TasksPage(driver)
+    task_page = pages(TasksPage)
     
     assert task_page.is_opened()
     
     task_page.click_create()
     logger.info('Button "Create task" pressed')
         
-    task_creation = TaskCreationPage(driver)
+    task_creation = pages(TaskCreationPage)
     
     assert task_creation.is_opened()
     logger.info('The task creation page is open')
@@ -50,8 +45,6 @@ def test_creation_task(driver, logged_in_user):
     
     task_creation.set_task_data(new_task_data)
     
-    
-     
     assert task_creation.get_alert_text() == 'Element created'
     logger.info(f'Task created!')
     
@@ -66,15 +59,12 @@ def test_creation_task(driver, logged_in_user):
     assert task_page.has_task(parse_task_list, title, description), 'The created card is not in the required column.'
     logger.info('The card has been successfully created in the appropriate column.')  
     
-
-    
-    
-def test_edit_task_success(driver, logged_in_user):
-    menu = Menu(driver)
+def test_edit_task_success(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['tasks'])
     
-    task_page = TasksPage(driver)
-    edit_task_page = EditTaskPage(driver)
+    task_page = pages(TasksPage)
+    edit_task_page = pages(EditTaskPage)
     
     # ищем первую карточку для редактирования в одном из столбцов
     task = task_page.find_first_available_task()
@@ -112,11 +102,11 @@ def test_edit_task_success(driver, logged_in_user):
     assert end_task_data == new_task_data, 'The data was not saved.'
     logger.info('The record with the new data has been successfully saved!')
     
-def test_filter_by_status(driver, logged_in_user): 
-    menu = Menu(driver)
+def test_filter_by_status(pages, logged_in_user): 
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = TasksPage(driver)
+    task_page = pages(TasksPage)
     
     all_tasks_before = task_page.get_all_tasks()
     
@@ -128,11 +118,11 @@ def test_filter_by_status(driver, logged_in_user):
         assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
         logger.info(f'Filter {status} has triggered.')
         
-def test_filter_by_assignee(driver, logged_in_user): 
-    menu = Menu(driver)
+def test_filter_by_assignee(pages, logged_in_user): 
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = TasksPage(driver)
+    task_page = pages(TasksPage)
     
     all_tasks_before = task_page.get_all_tasks()
     
@@ -147,11 +137,11 @@ def test_filter_by_assignee(driver, logged_in_user):
         assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
         logger.info(f'Filter {assignee} has triggered.')
 
-def test_filter_by_label(driver, logged_in_user): 
-    menu = Menu(driver)
+def test_filter_by_label(pages, logged_in_user): 
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = TasksPage(driver)
+    task_page = pages(TasksPage)
     
     all_tasks_before = task_page.get_all_tasks()
     
@@ -166,11 +156,11 @@ def test_filter_by_label(driver, logged_in_user):
         assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
         logger.info(f'Filter {label} has triggered.')
 
-def test_all_tasks_visability_and_clickable(driver, logged_in_user):
-    menu = Menu(driver)
+def test_all_tasks_visability_and_clickable(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['tasks'])
  
-    task_page = TasksPage(driver)
+    task_page = pages(TasksPage)
     logger.info('Checking if all tasks have been loaded.')
     assert task_page.are_all_tasks_visible()
     assert task_page.are_all_tasks_clickable()
@@ -187,7 +177,7 @@ def test_all_tasks_visability_and_clickable(driver, logged_in_user):
     selected_task_status = task_status_page.click_on_record(task_status_id)
     logger.info(f'Click to task status with ID {task_status_id}: {selected_task_status['name']} {selected_task_status['slug']}')
 
-    edit_task_status_page = EditTaskStatusesPage(driver)
+    edit_task_status_page = pages(EditTaskStatusesPage)
     
     assert edit_task_status_page.is_opened(task_status_id), f'Expected edit page for task status {task_status_id}, but condition is False'
     logger.info(f'Open edit page task status {task_status_id}')
@@ -199,17 +189,14 @@ def test_all_tasks_visability_and_clickable(driver, logged_in_user):
     assert task_status_from_form == selected_task_status, f'selected for editing {selected_task_status['name']}, and the current user {task_status_from_form['name']}'
     logger.info('Task status data is populated correctly.')
     
-    
-  
-# Проверка, что измененные данные сохраняются
-def test_new_task_status_data_saved_success(driver, logged_in_user):
+def test_new_task_status_data_saved_success(pages, logged_in_user):
     new_task_status_data = TASK_STATUSES[1]
     
-    menu = Menu(driver)
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['task_statuses'])
        
-    task_status_page = TaskStatusesPage(driver)
-    edit_task_status_page = EditTaskStatusesPage(driver)
+    task_status_page = pages(TaskStatusesPage)
+    edit_task_status_page = pages(EditTaskStatusesPage)
     
     task_status_id = task_status_page.get_random_id()
     
@@ -228,11 +215,11 @@ def test_new_task_status_data_saved_success(driver, logged_in_user):
     logger.info('Update task status data success')
 
 
-def test_remove_task_status_successful(driver, logged_in_user):  
-    menu = Menu(driver)
+def test_remove_task_status_successful(pages, logged_in_user):  
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['task_statuses'])
        
-    task_status_page = TaskStatusesPage(driver)
+    task_status_page = pages(TaskStatusesPage)
     
     # Парсим таблицу
     task_statuses_before_deletion = task_status_page.table_parse()
@@ -269,11 +256,11 @@ def test_remove_task_status_successful(driver, logged_in_user):
     logger.info('The task status has been successfully removed from the table.')
 
 
-def test_remove_all_task_statuses_successful(driver, logged_in_user):
-    menu = Menu(driver)
+def test_remove_all_task_statuses_successful(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['task_statuses'])
        
-    task_status_page = TaskStatusesPage(driver)
+    task_status_page = pages(TaskStatusesPage)
     task_statuses = task_status_page.table_parse()
     task_statuses_count = len(task_statuses)
     

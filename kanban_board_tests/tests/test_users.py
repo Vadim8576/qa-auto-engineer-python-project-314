@@ -12,18 +12,18 @@ from kanban_board_tests.pages.users.users_page import UsersPage
 
 logger = logging.getLogger(__name__)
 
-def test_creation_user(driver, logged_in_user):
+def test_creation_user(pages, logged_in_user):
     logger.info('Test creation user')
-    menu = Menu(driver)
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
         
-    users_page = UsersPage(driver)
+    users_page = pages(UsersPage)
     assert users_page.is_opened()
         
     users_page.click_create()
     logger.info('Button "Create user" pressed')
         
-    user_creation = UserCreationPage(driver)
+    user_creation = pages(UserCreationPage)
     user_creation.is_opened()
     assert 'Create User' in user_creation.header_text()
               
@@ -38,10 +38,10 @@ def test_creation_user(driver, logged_in_user):
     logger.info(f'User {user['first_name']} added successfully!')
 
 
-def test_users_table_is_visibility(driver, logged_in_user):
-    menu = Menu(driver)
+def test_users_table_is_visibility(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
-    users_page = UsersPage(driver)
+    users_page = pages(UsersPage)
     assert users_page.table_loads(), 'Users table not loaded!'
 
     parsed_records = users_page.table_parse()
@@ -72,11 +72,11 @@ def test_users_table_is_visibility(driver, logged_in_user):
         logger.info('All required fields are present and non-empty')
 
 
-def test_edit_user_success(driver, logged_in_user):
-    menu = Menu(driver)
+def test_edit_user_success(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
        
-    users_page = UsersPage(driver)   
+    users_page = pages(UsersPage)
     user_id = users_page.get_random_id()
     
     if user_id is None:
@@ -87,7 +87,7 @@ def test_edit_user_success(driver, logged_in_user):
     selected_user = users_page.click_on_record(user_id)
     logger.info(f'Click to user with ID {user_id}: {selected_user['email']} {selected_user['first_name']} {selected_user['last_name']}')
 
-    edit_user_page = EditUserPage(driver)
+    edit_user_page = pages(EditUserPage)
     assert edit_user_page.is_opened(user_id), f'Expected edit page for user {user_id}, but condition is False'
     logger.info(f'Open edit page user {user_id}')
     
@@ -99,15 +99,14 @@ def test_edit_user_success(driver, logged_in_user):
     logger.info('User data is populated correctly.')
     
     
-# Проверка, что измененные данные сохраняются
-def test_new_user_data_saved_success(driver, logged_in_user):
+def test_new_user_data_saved_success(pages, logged_in_user):
     new_user_data = USERS_DATA[1]
     
-    menu = Menu(driver)
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
        
-    users_page = UsersPage(driver)     
-    edit_user_page = EditUserPage(driver)
+    users_page = pages(UsersPage)
+    edit_user_page = pages(EditUserPage)
     
     user_id = users_page.get_random_id()
     
@@ -127,17 +126,17 @@ def test_new_user_data_saved_success(driver, logged_in_user):
     
      
 @pytest.mark.parametrize('incorrect_email', INCORRECT_EMAILS)
-def test_email_validation(driver, logged_in_user, incorrect_email):
-    menu = Menu(driver)
+def test_email_validation(pages, logged_in_user, incorrect_email):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
       
-    users_page = UsersPage(driver)
+    users_page = pages(UsersPage)
     user_id = users_page.get_random_id()
     
     # Выбор пользователя для редактирования
     users_page.click_on_record(user_id)
     
-    edit_user_page = EditUserPage(driver)
+    edit_user_page = pages(EditUserPage)
     logger.info(edit_user_page.current_url)
      
     logger.info(f'Input email: {incorrect_email}')
@@ -154,11 +153,11 @@ def test_email_validation(driver, logged_in_user, incorrect_email):
     logger.info('Invalid email failed validation.')
 
 
-def test_remove_user_successful(driver, logged_in_user):  
-    menu = Menu(driver)
+def test_remove_user_successful(pages, logged_in_user):  
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
       
-    users_page = UsersPage(driver)
+    users_page = pages(UsersPage)
     
     # Парсим таблицу
     users_before_deletion = users_page.table_parse()
@@ -196,11 +195,11 @@ def test_remove_user_successful(driver, logged_in_user):
     logger.info('The user has been successfully removed from the table.')
 
 
-def test_remove_all_users_successful(driver, logged_in_user):
-    menu = Menu(driver)
+def test_remove_all_users_successful(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['users'])
       
-    users_page = UsersPage(driver)
+    users_page = pages(UsersPage)
     users = users_page.table_parse()
     users_count = len(users)
     

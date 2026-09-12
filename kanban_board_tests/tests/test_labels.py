@@ -11,18 +11,18 @@ from kanban_board_tests.pages.menu_component import Menu
 
 logger = logging.getLogger(__name__)
 
-def test_creation_label(driver, logged_in_user):
+def test_creation_label(pages, logged_in_user):
     logger.info('Test creation label')
-    menu = Menu(driver)
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['labels'])
         
-    labels_page = LabelsPage(driver)
+    labels_page = pages(LabelsPage)
     assert labels_page.is_opened()
         
     labels_page.click_create()
     logger.info('Button "Create label" pressed')
         
-    label_creation = LabelCreationPage(driver)
+    label_creation = pages(LabelCreationPage)
     label_creation.is_opened()
     assert 'Create Label' in label_creation.header_text()
               
@@ -37,10 +37,10 @@ def test_creation_label(driver, logged_in_user):
     logger.info(f'Label {label} added successfully!')
 
 
-def test_labels_table_is_visibility(driver, logged_in_user):
-    menu = Menu(driver)
+def test_labels_table_is_visibility(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['labels'])
-    labels_page = LabelsPage(driver)
+    labels_page = pages(LabelsPage)
     assert labels_page.table_loads(), 'Labels table not loaded!'
 
     parsed_records = labels_page.table_parse()
@@ -63,10 +63,10 @@ def test_labels_table_is_visibility(driver, logged_in_user):
         logger.info('All required fields are present and non-empty')
 
 
-def test_edit_user_success(driver, logged_in_user):
-    menu = Menu(driver)
+def test_edit_user_success(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['labels'])
-    labels_page = LabelsPage(driver)
+    labels_page = pages(LabelsPage)
     label_id = labels_page.get_random_id()
     
     if label_id is None:
@@ -78,7 +78,7 @@ def test_edit_user_success(driver, logged_in_user):
     logger.info(f'Click to label with ID {label_id}: {selected_label['name']}')
 
     
-    edit_label_page = EditLabelPage(driver)
+    edit_label_page = pages(EditLabelPage)
     assert edit_label_page.is_opened(label_id), f'Expected edit page for label {label_id}, but condition is False'
     logger.info(f'Open edit page label {label_id}')
     
@@ -90,14 +90,13 @@ def test_edit_user_success(driver, logged_in_user):
     logger.info('Label data is populated correctly.')
     
 
-# Проверка, что измененные данные сохраняются
-def test_new_label_data_saved_success(driver, logged_in_user):
+def test_new_label_data_saved_success(pages, logged_in_user):
     new_label_data = LABELS_DATA[1]
     
-    menu = Menu(driver)
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['labels'])
-    labels_page = LabelsPage(driver)
-    edit_label_page = EditLabelPage(driver)
+    labels_page = pages(LabelsPage)
+    edit_label_page = pages(EditLabelPage)
     label_id = labels_page.get_random_id()
        
     # Получение данных пользователя из таблицы, на которого нажали, так же переход на редактирование
@@ -115,10 +114,10 @@ def test_new_label_data_saved_success(driver, logged_in_user):
     logger.info('Update label data success')
     
 
-def test_remove_label_successful(driver, logged_in_user):  
-    menu = Menu(driver)
+def test_remove_label_successful(pages, logged_in_user):  
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['labels'])
-    labels_page = LabelsPage(driver)
+    labels_page = pages(LabelsPage)
     
     # Парсим таблицу
     labels_before_deletion = labels_page.table_parse()
@@ -154,10 +153,10 @@ def test_remove_label_successful(driver, logged_in_user):
     logger.info('The label has been successfully removed from the table.')
 
 
-def test_remove_all_labels_successful(driver, logged_in_user):
-    menu = Menu(driver)
+def test_remove_all_labels_successful(pages, logged_in_user):
+    menu = pages(Menu)
     menu.go_to(MENU_LABELS['labels'])
-    labels_page = LabelsPage(driver)
+    labels_page = pages(LabelsPage)
     
     labels = labels_page.table_parse()
     labels_count = len(labels)
