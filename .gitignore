@@ -1,8 +1,8 @@
 *.egg-info
 __pycache__/
 dist/
+logs/
+screenshots/
 *.pyc
 .venv
-.coverage
-coverage.xml
 *_cache/
