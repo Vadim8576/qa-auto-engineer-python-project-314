@@ -22,4 +22,5 @@ make run
 
 ### Output artifacts:
 logs/tests.log
+
 screenshots/
