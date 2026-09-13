@@ -7,19 +7,19 @@
 
 This is an autotesting project for a Kanban board using Selenium (Python).
 
-## Technology stack:
+### Technology stack:
 
 Python, pytest, Selenium
 
-## Install:
+### Install:
 
 make install
 
-## Run:
+### Run:
 
 make start 
 make run
 
-## Output artifacts:
+### Output artifacts:
 logs/tests.log
 screenshots/
