@@ -1,6 +1,3 @@
-run:
-	uv run my-app
-
 install:
 	uv sync
 

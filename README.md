@@ -19,9 +19,10 @@ make install
 
 make start
 
-make run
+make test
 
 ### Output artifacts:
-logs/tests.log
+
+logs/
 
 screenshots/

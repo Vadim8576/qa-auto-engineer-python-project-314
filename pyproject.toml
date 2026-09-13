@@ -20,6 +20,3 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["kanban_board_tests"]
-
-[project.scripts]
-my-app = "kanban_board_tests.scripts.main:main"
