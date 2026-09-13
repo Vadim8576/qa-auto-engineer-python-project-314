@@ -17,7 +17,8 @@ make install
 
 ### Run:
 
-make start 
+make start
+
 make run
 
 ### Output artifacts:
