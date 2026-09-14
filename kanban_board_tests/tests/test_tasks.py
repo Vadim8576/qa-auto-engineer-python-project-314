@@ -1,4 +1,5 @@
 import logging
+import time
 
 from kanban_board_tests.data.tasks import TASK_DATA
 from kanban_board_tests.constants.task_consts import COLUMN_INDICES
@@ -86,6 +87,8 @@ def test_edit_task_success(pages, logged_in_user):
     logger.info('Editing the form.')
     edit_task_page.set_task_data(new_task_data)
     logger.info('New data saved.')
+    
+    time.sleep(1)
       
     # ищем ту же карточку, которую редактировали
     task = task_page.find_first_available_task()
@@ -93,6 +96,11 @@ def test_edit_task_success(pages, logged_in_user):
     task_page.click_edit(task)
     # Получаем данные из редактируемой карточки
     end_task_data = edit_task_page.get_task_data_from_form()
+    
+    
+    logger.info(f'start_task_data = {start_task_data}')
+    # logger.info(f'new_task_data = {new_task_data}')
+    logger.info(end_task_data)
     
     assert start_task_data != end_task_data, 'The data has not changed.'
     assert end_task_data == new_task_data, 'The data was not saved.'

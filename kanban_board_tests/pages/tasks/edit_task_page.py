@@ -2,13 +2,14 @@ import logging
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.mixins.tasks_mixin import TaksMixin
+from kanban_board_tests.mixins.table_mixin import TableMixin
 from kanban_board_tests.pages.locators.tasks_locators import (
     TasksLocators,
 )
 
 logger = logging.getLogger(__name__)
 
-class EditTaskPage(BasePage, TaksMixin):
+class EditTaskPage(BasePage, TaksMixin, TableMixin):
     PATH = '/tasks' 
     def is_opened(self, task_id):
         return f'/self.PATH/{task_id}' in self.current_url

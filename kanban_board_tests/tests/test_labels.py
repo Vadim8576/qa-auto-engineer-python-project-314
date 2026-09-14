@@ -44,8 +44,8 @@ def test_labels_table_is_visibility(pages, logged_in_user):
     assert labels_page.table_loads(), 'Labels table not loaded!'
 
     parsed_records = labels_page.table_parse()
-    assert len(parsed_records) > 0, 'Labels not found!'
-    logger.info('Labels table loaded')
+    assert len(parsed_records) > 0, 'No labels found in table after loading!'
+    logger.info('Labels table loaded and contains records.')
 
     missing_issues = []
 

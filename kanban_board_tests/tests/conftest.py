@@ -37,7 +37,7 @@ def pytest_runtest_makereport(item, call):
     result = outcome.get_result()
     setattr(item, 'rep_' + result.when, result)
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def driver(request):
     options = Options()
     options.add_argument('--window-size=1366,768')
@@ -75,6 +75,7 @@ def logged_in_user(driver, base_url, pages):
     login.open(base_url)
     login.login('Alex', 'Password!')
     logger.info('Logged in as Alex')
+    yield
 
 @pytest.fixture(autouse=True)
 def setup_logging(request):

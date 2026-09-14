@@ -6,11 +6,12 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
 from kanban_board_tests.mixins.tasks_mixin import TaksMixin
+from kanban_board_tests.mixins.table_mixin import TableMixin
 from kanban_board_tests.constants.task_consts import COLUMN_INDICES
 
 logger = logging.getLogger(__name__)
 
-class TasksPage(BasePage, TaksMixin):   
+class TasksPage(BasePage, TaksMixin, TableMixin):   
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
     PATH = '/tasks'
     def records_is_missing(self):

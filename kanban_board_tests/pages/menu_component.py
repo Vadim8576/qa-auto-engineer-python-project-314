@@ -6,12 +6,11 @@ from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.menu_locators import (
     MenuLocators,
 )
-from kanban_board_tests.constants.menu_consts import MENU_MAP
+from kanban_board_tests.constants.menu_consts import MENU_LABELS
 
 logger = logging.getLogger(__name__)
 
 class Menu(BasePage):
-    page_name = MENU_MAP
     def go_to(self, page_name):
         items = self.wait.until(EC.presence_of_all_elements_located(MenuLocators.MENU_ITEMS))
         

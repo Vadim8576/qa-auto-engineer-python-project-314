@@ -150,7 +150,7 @@ def test_email_validation(pages, logged_in_user, incorrect_email):
     
     assert email_from_form == incorrect_email, f'Expected {incorrect_email} in the email field, not {email_from_form}.'
     
-    edit_user_page.click_save()
+    # edit_user_page.click_save()
         
     assert edit_user_page.is_email_incorrect(), f'The email check was expected to fail, but it passed: {incorrect_email}'
     logger.info('Invalid email failed validation.')

@@ -6,7 +6,7 @@ from kanban_board_tests.pages.locators.dashboard_locators import (
 )
 
 
-class DashboardLocators(BasePage):
+class DashboardPage(BasePage):
     def is_opened(self):
         return urlparse(self.current_url).path in ('/', '')   
 
