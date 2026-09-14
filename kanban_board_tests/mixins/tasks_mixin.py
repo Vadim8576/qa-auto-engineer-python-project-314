@@ -12,16 +12,7 @@ logger = logging.getLogger(__name__)
 
 class TaksMixin:
     def set_task_title(self, title):
-        # self.type(TasksLocators.TITLE, title)
-        el = self.wait.until(EC.element_to_be_clickable(TasksLocators.TITLE))
-        self.driver.execute_script("""
-            var el = arguments[0];
-            el.value = arguments[1];
-            el.dispatchEvent(new Event('input', { bubbles: true }));
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-        """, el, title)
-        # Иногда полезно снять фокус, чтобы сработала валидация
-        self.driver.execute_script("arguments[0].blur();", el)
+        self.type(TasksLocators.TITLE, title)
     
     def set_task_description(self, description):
         self.type(TasksLocators.DESCRIPTION, description)
@@ -39,11 +30,11 @@ class TaksMixin:
         self.click_to_option(option)
         
     def set_task_data(self, task_data):
-        # self.set_task_title(task_data['title'])
-        
-        # self.set_task_description(task_data['description'])
-        # self.select_assignee(task_data['assignee'])
-        # self.select_status(task_data['status'])
+        self.set_task_title(task_data['title'])
+        self.set_task_description(task_data['description'])
+        # time.sleep(10)
+        self.select_assignee(task_data['assignee'])
+        self.select_status(task_data['status'])
         self.click_save()
     
     def get_options_list(self, locator):

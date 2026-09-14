@@ -69,18 +69,19 @@ def test_edit_task_success(pages, logged_in_user):
     task = task_page.find_first_available_task()
     task_page.click_edit(task)
     
+    
     # Получаем данные из редактируемой карточки
     start_task_data = edit_task_page.get_task_data_from_form()
     
     # Создаем новые данные карточки
     random_assignee = edit_task_page.get_random_assignee_option()
-    random_status = edit_task_page.get_random_status_option()
 
+    # time.sleep(10)
     new_task_data = {
         'title': TASK_DATA[1]['title'],
         'description': TASK_DATA[1]['description'],
         'assignee': random_assignee,
-        'status': random_status
+        'status': start_task_data['status'] # не меняем статус, чтобы карточка не улетела в другой столбец
     }        
     
     # Вводим новые данные в форму и сохраняем
@@ -88,20 +89,16 @@ def test_edit_task_success(pages, logged_in_user):
     edit_task_page.set_task_data(new_task_data)
     logger.info('New data saved.')
     
-    time.sleep(1)
-      
+    message_text = task_page.get_alert_text()
+       
     # ищем ту же карточку, которую редактировали
-    task = task_page.find_first_available_task()
+    updated_task = task_page.find_first_available_task()
     # заходим в нее
-    task_page.click_edit(task)
+    task_page.click_edit(updated_task)
     # Получаем данные из редактируемой карточки
     end_task_data = edit_task_page.get_task_data_from_form()
     
-    
-    logger.info(f'start_task_data = {start_task_data}')
-    # logger.info(f'new_task_data = {new_task_data}')
-    logger.info(end_task_data)
-    
+    assert 'Element updated' in message_text
     assert start_task_data != end_task_data, 'The data has not changed.'
     assert end_task_data == new_task_data, 'The data was not saved.'
     logger.info('The record with the new data has been successfully saved!')
