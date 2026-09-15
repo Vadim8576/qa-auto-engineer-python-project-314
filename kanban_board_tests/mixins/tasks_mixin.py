@@ -1,10 +1,12 @@
-import random
 import logging
-import time
+import random
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    StaleElementReferenceException,
+    WebDriverException,
+)
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 
 from kanban_board_tests.pages.locators.tasks_locators import (
     TasksLocators,
@@ -65,7 +67,7 @@ class TaksMixin:
         self.wait.until(lambda _: trigger.is_displayed() and trigger.is_enabled())
         try:
             trigger.click()
-        except Exception:
+        except (StaleElementReferenceException, ElementNotInteractableException, WebDriverException):
             self.driver.execute_script('arguments[0].click();', trigger)               
     
     def click_to_option(self, option_text):

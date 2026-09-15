@@ -80,6 +80,6 @@ def logged_in_user(driver, base_url, pages):
 @pytest.fixture(autouse=True)
 def setup_logging(request):
     test_name = request.node.name
-    logging.info('=== BEGIN TEST: %s ===', test_name)
+    logger.info('=== BEGIN TEST: %s ===', test_name)
     yield
-    logging.info('=== END TEST: %s ===', test_name)
+    logger.info('=== END TEST: %s ===', test_name)

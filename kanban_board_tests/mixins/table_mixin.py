@@ -1,5 +1,6 @@
 import random
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.locators.table_locators import (

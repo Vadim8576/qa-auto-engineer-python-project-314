@@ -7,7 +7,6 @@ from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.menu_locators import (
     MenuLocators,
 )
-from kanban_board_tests.constants.menu_consts import MENU_LABELS
 
 logger = logging.getLogger(__name__)
 

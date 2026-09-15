@@ -2,8 +2,8 @@ import logging
 
 import pytest
 
-from kanban_board_tests.data.labels import LABELS_DATA
 from kanban_board_tests.constants.menu_consts import MENU_LABELS
+from kanban_board_tests.data.labels import LABELS_DATA
 from kanban_board_tests.pages.labels.edit_label_page import EditLabelPage
 from kanban_board_tests.pages.labels.label_creation_page import LabelCreationPage
 from kanban_board_tests.pages.labels.labels_page import LabelsPage

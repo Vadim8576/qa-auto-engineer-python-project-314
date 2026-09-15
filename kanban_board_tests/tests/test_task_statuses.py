@@ -2,8 +2,8 @@ import logging
 
 import pytest
 
-from kanban_board_tests.data.task_statuses import TASK_STATUSES
 from kanban_board_tests.constants.menu_consts import MENU_LABELS
+from kanban_board_tests.data.task_statuses import TASK_STATUSES
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.pages.task_statuses.edit_task_statuses_page import (
     EditTaskStatusesPage,

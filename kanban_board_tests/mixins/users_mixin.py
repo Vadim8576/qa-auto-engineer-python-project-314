@@ -1,4 +1,3 @@
-from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.locators.users_locators import (
     UserLocators,

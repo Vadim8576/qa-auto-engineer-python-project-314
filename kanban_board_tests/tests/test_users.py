@@ -2,9 +2,9 @@ import logging
 
 import pytest
 
+from kanban_board_tests.constants.menu_consts import MENU_LABELS
 from kanban_board_tests.data.emails import INCORRECT_EMAILS
 from kanban_board_tests.data.users import USERS_DATA
-from kanban_board_tests.constants.menu_consts import MENU_LABELS
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.pages.users.edit_user_page import EditUserPage
 from kanban_board_tests.pages.users.user_creation_page import UserCreationPage

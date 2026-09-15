@@ -1,18 +1,15 @@
 import logging
-import time
 import random
 
-from kanban_board_tests.data.tasks import TASK_DATA
-from kanban_board_tests.constants.task_consts import STATUS_TO_ID
-from kanban_board_tests.constants.task_consts import ID_TO_STATUS
 from kanban_board_tests.constants.menu_consts import MENU_LABELS
+from kanban_board_tests.constants.task_consts import ID_TO_STATUS, STATUS_TO_ID
+from kanban_board_tests.data.tasks import TASK_DATA
 from kanban_board_tests.pages.menu_component import Menu
+from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
+from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
+from kanban_board_tests.pages.tasks.task_creation_page import TaskCreationPage
 from kanban_board_tests.pages.tasks.tasks_page import TasksPage
 from kanban_board_tests.pages.users.users_page import UsersPage
-from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
-from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
-from kanban_board_tests.pages.tasks.task_creation_page import TaskCreationPage
-
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +60,7 @@ def test_creation_task(pages, logged_in_user):
     task_creation.set_task_data(new_task_data)
     
     assert task_creation.get_alert_text() == 'Element created'
-    logger.info(f'Task created!')
+    logger.info('Task created!')
     
     menu.go_to(MENU_LABELS['tasks'])
     
@@ -226,7 +223,6 @@ def test_moving_task_to_another_column(pages, logged_in_user):
 
     target_random_id = random.choice(available_ids)
     logger.info(f'target column ID = {target_random_id}')
-    target_status_column = task_page.get_status_column_by_id(target_random_id)
     target_column_status = ID_TO_STATUS[target_random_id]
 
     # Считаем задачи в целевой колонке ДО

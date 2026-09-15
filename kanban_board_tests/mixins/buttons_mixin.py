@@ -1,6 +1,4 @@
-import random
 
-from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.locators.buttons_locators import (
     ButtonsLocators,

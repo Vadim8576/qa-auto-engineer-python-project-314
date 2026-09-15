@@ -1,17 +1,14 @@
 import logging
-import time
-import random
 
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver import ActionChains
-from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
+from kanban_board_tests.constants.task_consts import STATUS_TO_ID
+from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
+from kanban_board_tests.mixins.table_mixin import TableMixin
+from kanban_board_tests.mixins.tasks_mixin import TaksMixin
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
-from kanban_board_tests.mixins.tasks_mixin import TaksMixin
-from kanban_board_tests.mixins.table_mixin import TableMixin
-from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
-from kanban_board_tests.constants.task_consts import STATUS_TO_ID
 
 logger = logging.getLogger(__name__)
 
