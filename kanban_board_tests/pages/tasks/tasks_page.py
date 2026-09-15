@@ -127,6 +127,9 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
     def get_status_column_by_task(self, task):
         return task.find_element(By.XPATH, './parent::*')
     
+    def get_task_count_in_column(self, column):
+        return len(column.find_elements(*TasksLocators.TASKS))
+    
     def get_status_column_id(self, status_column):
         return status_column.get_attribute('data-rfd-droppable-id')
 

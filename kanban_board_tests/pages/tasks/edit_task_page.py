@@ -22,8 +22,8 @@ class EditTaskPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
         status = self.text_of(TasksLocators.STATUS_COMBOBOX)
         return {
             'assignee': assignee,
-            'title': title,
-            'description': description,
+            'title': self.normalize_text(title),
+            'description': self.normalize_text(description),
             'status': status,
         }
     

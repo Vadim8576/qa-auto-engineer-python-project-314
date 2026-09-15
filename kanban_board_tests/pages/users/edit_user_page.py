@@ -16,13 +16,13 @@ class EditUserPage(BasePage, UsersMixin, TableMixin, ButtonsMixin):
         return f'{self.PATH}/{user_id}' in self.current_url
     
     def get_user_data_from_form(self):
-        email = self.value_of(UserLocators.EMAIL)
-        first_name = self.value_of(UserLocators.FIRST_NAME)
-        last_name = self.value_of(UserLocators.LAST_NAME)
+        email = self.value_of(UserLocators.EMAIL).strip()
+        first_name = self.value_of(UserLocators.FIRST_NAME).strip()
+        last_name = self.value_of(UserLocators.LAST_NAME).strip()
         return {
-            'email': email,
-            'first_name': first_name,
-            'last_name': last_name
+            'email': self.normalize_text(email),
+            'first_name': self.normalize_text(first_name),
+            'last_name': self.normalize_text(last_name)
         }
         
     def is_email_incorrect(self):

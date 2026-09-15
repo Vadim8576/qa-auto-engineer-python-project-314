@@ -21,7 +21,7 @@ class UsersMixin:
         self.set_user_last_name(user_data['last_name'])
         self.click_save()
     
-    def get_assignee_from(self, users):
+    def get_assignee(self, users):
         emails = []
         for u in users:
             emails.append(u['email'])

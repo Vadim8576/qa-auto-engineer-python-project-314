@@ -1,4 +1,5 @@
 import logging
+import time
 
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Menu(BasePage):
     def go_to(self, page_name):
+        time.sleep(0.5)
         items = self.wait.until(EC.presence_of_all_elements_located(MenuLocators.MENU_ITEMS))
         
         for item in items:

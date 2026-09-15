@@ -15,7 +15,7 @@ class EditLabelPage(BasePage, LabelsMixin, TableMixin, ButtonsMixin):
     def get_label_data_from_form(self):
         name = self.value_of(LabelsLocators.NAME)
         return {
-            'name': name
+            'name': self.normalize_text(name)
         }
     
     

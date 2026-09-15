@@ -140,6 +140,7 @@ def test_remove_label_successful(pages, logged_in_user):
     logger.info('Click to "Delete"')
     
     # Снова парсим таблицу
+    menu.go_to(MENU_LABELS['labels']) # Обновляем страницу
     labels_after_deletion = labels_page.table_parse()
     labels_after_deletion_count = len(labels_after_deletion)
     logger.info(f'Users in the table after deletion: {labels_after_deletion_count}')

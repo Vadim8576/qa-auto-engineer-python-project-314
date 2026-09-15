@@ -1,6 +1,7 @@
 import logging
 import time
 import random
+import re
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
@@ -75,3 +76,6 @@ class BasePage:
     
     def get_random_value(self, values):
             return random.choice(values)
+    
+    def normalize_text(self, text):
+        return re.sub(r'\s+', ' ', text).strip()

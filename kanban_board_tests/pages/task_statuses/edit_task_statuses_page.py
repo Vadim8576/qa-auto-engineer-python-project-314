@@ -19,8 +19,8 @@ class EditTaskStatusesPage(BasePage, TaskStatusesMixin, TableMixin, ButtonsMixin
         name = self.value_of(TaskStatusesLocators.NAME)
         slug = self.value_of(TaskStatusesLocators.SLUG)
         return {
-            'name': name,
-            'slug': slug,
+            'name': self.normalize_text(name),
+            'slug': self.normalize_text(slug),
         }
         
     

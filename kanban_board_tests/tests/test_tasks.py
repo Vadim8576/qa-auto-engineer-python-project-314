@@ -28,7 +28,7 @@ def test_creation_task(pages, logged_in_user):
     menu.go_to(MENU_LABELS['users'])
              
     users = users_page.table_parse()    
-    assignees = users_page.get_assignee_from(users)
+    assignees = users_page.get_assignee(users)
     random_assignee = users_page.get_random_value(assignees)
         
     menu.go_to(MENU_LABELS['task_statuses'])
@@ -85,18 +85,10 @@ def test_edit_task_success(pages, logged_in_user):
     menu.go_to(MENU_LABELS['users'])
      
     users = users_page.table_parse()    
-    assignees = users_page.get_assignee_from(users)
+    assignees = users_page.get_assignee(users)
     
-    random_assignee = edit_task_page.get_random_value(assignees)
-
-    new_task_data = {
-        'title': TASK_DATA[1]['title'],
-        'description': TASK_DATA[1]['description'],
-        'assignee': random_assignee,
-        'status': start_task_data['status'] # не меняем статус, чтобы карточка не улетела в другой столбец
-    }        
-    
-    
+    random_assignee = edit_task_page.get_random_value(assignees)      
+   
     menu.go_to(MENU_LABELS['tasks'])
      
     # ищем первую карточку для редактирования в одном из столбцов
@@ -105,6 +97,12 @@ def test_edit_task_success(pages, logged_in_user):
         
     # Получаем данные из редактируемой карточки
     start_task_data = edit_task_page.get_task_data_from_form() 
+    new_task_data = {
+        'title': TASK_DATA[1]['title'],
+        'description': TASK_DATA[1]['description'],
+        'assignee': random_assignee,
+        'status': start_task_data['status'] # не меняем статус, чтобы карточка не улетела в другой столбец
+    }  
     
     # Вводим новые данные в форму и сохраняем
     logger.info('Editing the form.')
@@ -158,7 +156,7 @@ def test_filter_by_assignee(pages, logged_in_user):
  
     users = users_page.table_parse()
     
-    assignee = users_page.get_assignee_from(users)
+    assignee = users_page.get_assignee(users)
     logger.info(f'emails: {assignee}')
     
     menu.go_to(MENU_LABELS['tasks'])
@@ -274,8 +272,17 @@ def test_remove_task_successful(pages, logged_in_user):
     
     menu.go_to(MENU_LABELS["tasks"])
     
-    
     task = task_page.find_first_available_task()
+    status_column = task_page.get_status_column_by_task(task)
+    status_column_id = task_page.get_status_column_id(status_column)
+    tasks_count_before = task_page.get_task_count_in_column(status_column)
+    logger.info(f'tasks_count = {tasks_count_before}')
+    
     task_page.click_edit(task)
+    task_page.click_delete()
+    
+    updated_status_column = task_page.get_status_column_by_id(status_column_id)
+    tasks_count_after = task_page.get_task_count_in_column(updated_status_column)
+    logger.info(f'tasks_count = {tasks_count_after}')
     
     
