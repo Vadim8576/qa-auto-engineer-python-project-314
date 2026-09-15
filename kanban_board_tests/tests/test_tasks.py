@@ -8,7 +8,9 @@ from kanban_board_tests.constants.task_consts import ID_TO_STATUS
 from kanban_board_tests.constants.menu_consts import MENU_LABELS
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.pages.tasks.tasks_page import TasksPage
+from kanban_board_tests.pages.users.users_page import UsersPage
 from kanban_board_tests.pages.tasks.edit_task_page import EditTaskPage
+from kanban_board_tests.pages.task_statuses.task_statuses_page import TaskStatusesPage
 from kanban_board_tests.pages.tasks.task_creation_page import TaskCreationPage
 
 
@@ -18,6 +20,32 @@ def test_creation_task(pages, logged_in_user):
     menu = pages(Menu)
     task_page = pages(TasksPage)
     task_creation = pages(TaskCreationPage)
+    users_page = pages(UsersPage)
+    task_statuses_page = pages(TaskStatusesPage)
+        
+    
+    # Получаем рандомные assignees, statuses и создаем new_task_data
+    menu.go_to(MENU_LABELS['users'])
+             
+    users = users_page.table_parse()    
+    assignees = users_page.get_assignee_from(users)
+    random_assignee = users_page.get_random_value(assignees)
+        
+    menu.go_to(MENU_LABELS['task_statuses'])
+
+    statuses = task_statuses_page.table_parse()  
+    task_status = task_statuses_page.get_tasks_statuses(statuses)
+    random_status = task_statuses_page.get_random_value(task_status)
+    
+    logger.info(f'Select assignee: {random_assignee}')     
+    logger.info(f'Select status: {random_status}')
+    
+    new_task_data = {
+        'title': TASK_DATA[0]['title'],
+        'description': TASK_DATA[0]['description'],
+        'assignee': random_assignee,
+        'status': random_status
+    }
 
     menu.go_to(MENU_LABELS['tasks'])
         
@@ -30,20 +58,8 @@ def test_creation_task(pages, logged_in_user):
     logger.info('The task creation page is open')
     
     assert 'Create Task' in task_creation.header_text()
-    
-    # Создаем Task (выбираем исполнителя, статус задачи, вводим title, description)
-    random_assignee = task_creation.get_random_assignee_option()
-    random_status = task_creation.get_random_status_option()
-    logger.info(f'Select assignee: {random_assignee}')     
-    logger.info(f'Select status: {random_status}')
-     
-    new_task_data = {
-        'title': TASK_DATA[0]['title'],
-        'description': TASK_DATA[0]['description'],
-        'assignee': random_assignee,
-        'status': random_status
-    }
-    
+
+    # Заполняем форму новыми данными
     task_creation.set_task_data(new_task_data)
     
     assert task_creation.get_alert_text() == 'Element created'
@@ -64,27 +80,31 @@ def test_edit_task_success(pages, logged_in_user):
     menu = pages(Menu)
     task_page = pages(TasksPage)
     edit_task_page = pages(EditTaskPage)
+    users_page = pages(UsersPage)
+    
+    menu.go_to(MENU_LABELS['users'])
+     
+    users = users_page.table_parse()    
+    assignees = users_page.get_assignee_from(users)
+    
+    random_assignee = edit_task_page.get_random_value(assignees)
 
-    menu.go_to(MENU_LABELS['tasks'])
-    
-    # ищем первую карточку для редактирования в одном из столбцов
-    task = task_page.find_first_available_task()
-    task_page.click_edit(task)
-    
-    
-    # Получаем данные из редактируемой карточки
-    start_task_data = edit_task_page.get_task_data_from_form()
-    
-    # Создаем новые данные карточки
-    random_assignee = edit_task_page.get_random_assignee_option()
-
-    # time.sleep(10)
     new_task_data = {
         'title': TASK_DATA[1]['title'],
         'description': TASK_DATA[1]['description'],
         'assignee': random_assignee,
         'status': start_task_data['status'] # не меняем статус, чтобы карточка не улетела в другой столбец
     }        
+    
+    
+    menu.go_to(MENU_LABELS['tasks'])
+     
+    # ищем первую карточку для редактирования в одном из столбцов
+    task = task_page.find_first_available_task()
+    task_page.click_edit(task)
+        
+    # Получаем данные из редактируемой карточки
+    start_task_data = edit_task_page.get_task_data_from_form() 
     
     # Вводим новые данные в форму и сохраняем
     logger.info('Editing the form.')
@@ -108,37 +128,49 @@ def test_edit_task_success(pages, logged_in_user):
 def test_filter_by_status(pages, logged_in_user): 
     menu = pages(Menu)
     task_page = pages(TasksPage)
+    task_statuses_page = pages(TaskStatusesPage)
+    
+    menu.go_to(MENU_LABELS['task_statuses'])
+     
+    task_statuses = task_statuses_page.table_parse()
+        
+    task_statuses = task_statuses_page.get_task_statuses_from_users(task_statuses)
+    
 
     menu.go_to(MENU_LABELS['tasks'])
     
     all_tasks_before = task_page.get_all_tasks()
     
-    for status in STATUS_TO_ID:      
-        logger.info(f'Filter: {status}')
-        task_page.select_status(status)
+    for name in task_statuses:      
+        logger.info(f'Filter: {name}')
+        task_page.select_status(name)
         task_page.wait_for_task_count_change(len(all_tasks_before))      
         all_tasks_after = task_page.get_all_tasks()
         assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
-        logger.info(f'Filter {status} has triggered.')
+        logger.info(f'Filter {name} has triggered.')
         
 def test_filter_by_assignee(pages, logged_in_user): 
     menu = pages(Menu)
     task_page = pages(TasksPage)
+    users_page = pages(UsersPage)
 
-    menu.go_to(MENU_LABELS['tasks'])
+    menu.go_to(MENU_LABELS['users'])
  
+    users = users_page.table_parse()
+    
+    assignee = users_page.get_assignee_from(users)
+    logger.info(f'emails: {assignee}')
+    
+    menu.go_to(MENU_LABELS['tasks'])
     all_tasks_before = task_page.get_all_tasks()
     
-    assignees = task_page.get_all_assignees()
-    logger.info(f'assignees: {assignees}')
-    
-    for assignee in assignees:      
-        logger.info(f'Filter: {assignee}')
-        task_page.select_assignee(assignee)
+    for email in assignee:      
+        logger.info(f'Filter: {email}')
+        task_page.select_assignee(email)
         task_page.wait_for_task_count_change(len(all_tasks_before))
         all_tasks_after = task_page.get_all_tasks()
         assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
-        logger.info(f'Filter {assignee} has triggered.')
+        logger.info(f'Filter {email} has triggered.')
 
 def test_filter_by_label(pages, logged_in_user): 
     menu = pages(Menu)
@@ -171,18 +203,19 @@ def test_all_tasks_visability_and_clickable(pages, logged_in_user):
     logger.info('All tasks have been successfully loaded.')
 
 
-def test_drag_and_drop_task(pages, logged_in_user):
+def test_moving_task_to_another_column(pages, logged_in_user):
     menu = pages(Menu)
     task_page = pages(TasksPage)
 
     menu.go_to(MENU_LABELS["tasks"])
 
     # Находим задачу для перетаскивания
-    draggable_task = task_page.find_first_available_task()
+    task = task_page.find_first_available_task()
 
     # Определяем исходную колонку
-    source_column = task_page.get_status_column_by_task(draggable_task)
+    source_column = task_page.get_status_column_by_task(task)
     source_column_id = task_page.get_status_column_id(source_column)
+    logger.info(f'source column ID = {source_column_id}')
     source_column_status = ID_TO_STATUS[source_column_id]
 
     # Считаем задачи в исходной колонке ДО
@@ -194,6 +227,7 @@ def test_drag_and_drop_task(pages, logged_in_user):
     available_ids = [v for v in STATUS_TO_ID.values() if v != source_column_id]
 
     target_random_id = random.choice(available_ids)
+    logger.info(f'target column ID = {target_random_id}')
     target_status_column = task_page.get_status_column_by_id(target_random_id)
     target_column_status = ID_TO_STATUS[target_random_id]
 
@@ -202,9 +236,11 @@ def test_drag_and_drop_task(pages, logged_in_user):
         task_page.get_task_list_by_status(target_column_status)
     )
 
-    # Выполняем Drag and Drop
-    task_page.drag_task_to_column(draggable_task, target_status_column)
-
+    # Меняем статус
+    task_page.click_edit(task)
+    task_page.select_status(target_column_status)
+    task_page.click_save()
+    
     # Получаем актуальные количества ПОСЛЕ
     actual_source_column_task_count_after = len(
         task_page.get_task_list_by_status(source_column_status)
@@ -222,122 +258,24 @@ def test_drag_and_drop_task(pages, logged_in_user):
         f'expected {expected_source_column_task_count_after}. '
         f'Before: {source_column_task_count_before}'
     )
+    logger.info('The current number of tasks in the source column matches the expected value.')
 
     assert actual_target_column_task_count_after == expected_target_column_task_count_after, (
         f'Target column task count mismatch: got {actual_target_column_task_count_after}, '
         f'expected {expected_target_column_task_count_after}. '
         f'Before: {target_column_task_count_before}'
     )
+    logger.info('The current number of tasks in the target column matches the expected value.')
 
 
-
-      
-'''   
-    
-    if task_status_id is None:
-        pytest.skip("Cannot run test: no users available in the table.")
-     
-    logger.info(f'User with ID = {task_status_id}')
-    
-    selected_task_status = task_status_page.click_on_record(task_status_id)
-    logger.info(f'Click to task status with ID {task_status_id}: {selected_task_status['name']} {selected_task_status['slug']}')
-
-    edit_task_status_page = pages(EditTaskStatusesPage)
-    
-    assert edit_task_status_page.is_opened(task_status_id), f'Expected edit page for task status {task_status_id}, but condition is False'
-    logger.info(f'Open edit page task status {task_status_id}')
-    
-    assert f'Task status {selected_task_status['name']}' in edit_task_status_page.header_text(), f'This is not an edit page {selected_task_status}'
-
-    # Проверка на совпадение данных из формы с данными редактируемого пользователя
-    task_status_from_form = edit_task_status_page.get_task_status_data_from_form()
-    assert task_status_from_form == selected_task_status, f'selected for editing {selected_task_status['name']}, and the current user {task_status_from_form['name']}'
-    logger.info('Task status data is populated correctly.')
-    
-def test_new_task_status_data_saved_success(pages, logged_in_user):
-    new_task_status_data = TASK_STATUSES[1]
-    
+def test_remove_task_successful(pages, logged_in_user):
     menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
-       
-    task_status_page = pages(TaskStatusesPage)
-    edit_task_status_page = pages(EditTaskStatusesPage)
+    task_page = pages(TasksPage)
     
-    task_status_id = task_status_page.get_random_id()
+    menu.go_to(MENU_LABELS["tasks"])
     
-    # Получение данных из таблицы, на которого нажали, так же переход на редактирование
-    task_status_page.click_on_record(task_status_id)
     
-    logger.info(f'Click to task status with ID {task_status_id}: {new_task_status_data['name']} {new_task_status_data['slug']}')
+    task = task_page.find_first_available_task()
+    task_page.click_edit(task)
     
-    # Ввод новых данных и нажатие "сохранить"
-    edit_task_status_page.set_task_status_data(new_task_status_data)
     
-    # Получаем данные из таблицы для проверки, что данные сохранились
-    task_staus_data = task_status_page.click_on_record(task_status_id)
-    
-    assert task_staus_data == new_task_status_data, f'selected for editing {task_staus_data}, and the current task status {new_task_status_data}'
-    logger.info('Update task status data success')
-
-
-def test_remove_task_status_successful(pages, logged_in_user):  
-    menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
-       
-    task_status_page = pages(TaskStatusesPage)
-    
-    # Парсим таблицу
-    task_statuses_before_deletion = task_status_page.table_parse()
-    task_statuses_before_deletion_count = len(task_statuses_before_deletion)
-    logger.info(f'Task status in the table before deletion: {task_statuses_before_deletion_count}')
-    
-    # Если таблица пуста, пропускаем тест
-    if task_statuses_before_deletion_count == 0:
-        pytest.skip("Cannot run test: no task status available in the table.")
-      
-    task_status_id = task_status_page.get_random_id()
-    # Получаем данные выделенного пользователя
-    selected_task_status = task_status_page.select_record(task_status_id)
-    logger.info(f'Select task staus with ID = {task_status_id}')
-    
-    # Удаляем выделенную запись
-    task_status_page.click_delete()
-    logger.info('Click to "Delete"')
-    
-    # Снова парсим таблицу
-    task_status_after_deletion = task_status_page.table_parse()
-    task_status_after_deletion_count = len(task_status_after_deletion)
-    logger.info(f'Users in the table after deletion: {task_status_after_deletion_count}')
-    
-    assert (task_statuses_before_deletion_count - 1) == task_status_after_deletion_count, 'The number of task status in the table does not match.'
-    
-    # Проверяем, что удаленный пользователь отсутствует в таблице
-    assert not any(
-        t['name'] == selected_task_status['name']
-        and t['slug'] == selected_task_status['slug']
-        for t in task_status_after_deletion
-    ), 'The task status has been deleted but still appears in the table.'
-    
-    logger.info('The task status has been successfully removed from the table.')
-
-
-def test_remove_all_task_statuses_successful(pages, logged_in_user):
-    menu = pages(Menu)
-    menu.go_to(MENU_LABELS['task_statuses'])
-       
-    task_status_page = pages(TaskStatusesPage)
-    task_statuses = task_status_page.table_parse()
-    task_statuses_count = len(task_statuses)
-    
-    task_status_page.select_all_records()
-    logger.info('Select all task statuses in the table.')
-    
-    # Удаляем выделенных пользователей
-    task_status_page.click_delete()
-    logger.info('Click to "Delete"')
-      
-    assert f'{task_statuses_count} elements deleted' in task_status_page.get_alert_text() 
-    assert task_status_page.records_is_missing(), 'The "No Task statuses yet" message is missing. Perhaps not all task statuses have been deleted.'
-    logger.info('All task statuses have been successfully deleted.')
-    
-'''

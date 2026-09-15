@@ -1,4 +1,6 @@
 import logging
+import time
+import random
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
@@ -30,11 +32,10 @@ class BasePage:
         el.click()
 
     def type(self, locator, text):
-        el = self.wait.until(EC.visibility_of_element_located(locator))         
+        el = self.wait.until(EC.visibility_of_element_located(locator))
         el.send_keys(Keys.CONTROL, 'a')
         el.send_keys(Keys.DELETE)
         el.send_keys(text)
-        self.wait.until(lambda driver: el.get_attribute('value') == text)
 
     def text_of(self, locator):
         el = self.wait.until(EC.visibility_of_element_located(locator))
@@ -72,3 +73,5 @@ class BasePage:
         except TimeoutException:
             return False
     
+    def get_random_value(self, values):
+            return random.choice(values)

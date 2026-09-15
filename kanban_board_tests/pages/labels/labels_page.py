@@ -6,11 +6,12 @@ from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.table_locators import TableLocators
 from kanban_board_tests.pages.locators.labels_locators import LabelsLocators
 from kanban_board_tests.mixins.table_mixin import TableMixin
+from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 
 
 logger = logging.getLogger(__name__)
 
-class LabelsPage(BasePage, TableMixin):  
+class LabelsPage(BasePage, TableMixin, ButtonsMixin):  
     PATH = '/labels'
     def records_is_missing(self):
         elements = self.driver.find_elements(*LabelsLocators.NO_RECORDS_MESSAGE)

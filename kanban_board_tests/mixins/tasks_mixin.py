@@ -3,6 +3,8 @@ import logging
 import time
 
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from kanban_board_tests.pages.locators.tasks_locators import (
     TasksLocators,
@@ -32,32 +34,30 @@ class TaksMixin:
     def set_task_data(self, task_data):
         self.set_task_title(task_data['title'])
         self.set_task_description(task_data['description'])
-        # time.sleep(10)
         self.select_assignee(task_data['assignee'])
         self.select_status(task_data['status'])
         self.click_save()
     
     def get_options_list(self, locator):
-        self.click_to_dropdown(locator)
-        time.sleep(0.2)
-        options = self.wait.until(EC.presence_of_all_elements_located(TasksLocators.LISTBOX_OPTION))   
+        self.click_to_dropdown(locator) 
+        options = self.wait.until(
+            EC.presence_of_all_elements_located(TasksLocators.LISTBOX_OPTION)
+        )        
         return [option.text.strip() for option in options]
     
     def get_random_option(self, locator):
         options = self.get_options_list(locator)
+        
+        logger.info(f'options = {options}')
+        
         filtered_options = [o for o in options if o and o.strip()]
-        logger.info(f'option = {filtered_options}')
+        
         if not filtered_options:
             return None
         random_option = random.choice(filtered_options)
         self.click_to_option(random_option)
         return random_option
 
-    def get_random_assignee_option(self):
-        return self.get_random_option(TasksLocators.ASSIGNEE_COMBOBOX)
-    
-    def get_random_status_option(self):
-        return self.get_random_option(TasksLocators.STATUS_COMBOBOX)
     
     def click_to_dropdown(self, selector):
         trigger = self.driver.find_element(*selector)
@@ -70,3 +70,5 @@ class TaksMixin:
     
     def click_to_option(self, option_text):
         self.click(TasksLocators.select_option(option_text))
+    
+    

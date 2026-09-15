@@ -30,13 +30,4 @@ class TableMixin:
         random_records = random.choice(records)
         return random_records['id']
     
-    def click_create(self):
-        self.click(TableLocators.CREATE_BUTTON)
-    
-    def click_delete(self):
-        self.click(TableLocators.DELETE_BUTTON)
-    
-    def click_save(self):
-        self.click(TableLocators.SAVE_BUTTON)
-    
     

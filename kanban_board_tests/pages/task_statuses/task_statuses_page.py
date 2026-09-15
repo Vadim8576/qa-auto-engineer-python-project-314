@@ -4,6 +4,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.mixins.table_mixin import TableMixin
+from kanban_board_tests.mixins.task_statuses_mixin import TaskStatusesMixin
+from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.pages.locators.table_locators import TableLocators
 from kanban_board_tests.pages.locators.task_statuses_locators import (
     TaskStatusesLocators,
@@ -11,7 +13,7 @@ from kanban_board_tests.pages.locators.task_statuses_locators import (
 
 logger = logging.getLogger(__name__)
 
-class TaskStatusesPage(BasePage, TableMixin):   
+class TaskStatusesPage(BasePage, TableMixin, TaskStatusesMixin, ButtonsMixin):   
     PATH = '/task_statuses'
     def records_is_missing(self):
         elements = self.driver.find_elements(*TaskStatusesLocators.NO_RECORDS_MESSAGE)

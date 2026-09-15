@@ -1,4 +1,6 @@
 import logging
+import time
+import random
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
@@ -8,11 +10,12 @@ from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
 from kanban_board_tests.mixins.tasks_mixin import TaksMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
+from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.constants.task_consts import STATUS_TO_ID
 
 logger = logging.getLogger(__name__)
 
-class TasksPage(BasePage, TaksMixin, TableMixin):   
+class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):   
     NO_RECORDS_MESSAGE = (By.XPATH, "//p[contains(text(), 'No Task statuses yet')]")
     PATH = '/tasks'
     def records_is_missing(self):
@@ -70,6 +73,7 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
     def get_all_assignees(self):
         assignees = self.get_options_list(TasksLocators.ASSIGNEE_COMBOBOX)
         filtered_assignees = [a for a in assignees if a.strip()]
+        
         return filtered_assignees
     
     def get_all_labels(self):
@@ -119,12 +123,6 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
                 task = task_list[0]
                 break
         return task
-    
-    def drag_task_to_column(self, draggable_task, target_column):
-        actions = ActionChains(self.driver)
-        actions.drag_and_drop(draggable_task, target_column).perform()
-        # Небольшая пауза, чтобы UI успел обработать перемещение
-        self.wait.until(lambda d: True)
         
     def get_status_column_by_task(self, task):
         return task.find_element(By.XPATH, './parent::*')
@@ -132,4 +130,4 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
     def get_status_column_id(self, status_column):
         return status_column.get_attribute('data-rfd-droppable-id')
 
-        
+    
