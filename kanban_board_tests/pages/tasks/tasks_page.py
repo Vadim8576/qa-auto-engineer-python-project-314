@@ -130,4 +130,13 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
     def get_status_column_id(self, status_column):
         return status_column.get_attribute('data-rfd-droppable-id')
 
-    
+    def get_task_count_in_column_by_id(self, column_id):
+        column = self.get_status_column_by_id(column_id)
+        tasks = column.find_elements(*TasksLocators.TASKS)
+        return len(tasks)
+
+    def wait_for_task_removal_in_column_by_id(self, status_column_id, tasks_count_before):
+        self.wait.until(
+            lambda d: self.get_task_count_in_column_by_id(status_column_id) < tasks_count_before,
+            message='Task was not removed after delete action'
+        )

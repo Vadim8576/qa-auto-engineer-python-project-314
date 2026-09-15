@@ -265,6 +265,7 @@ def test_moving_task_to_another_column(pages, logged_in_user):
 def test_remove_task_successful(pages, logged_in_user):
     menu = pages(Menu)
     task_page = pages(TasksPage)
+    edit_task_page = pages(EditTaskPage)
     
     menu.go_to(MENU_LABELS["tasks"])
     
@@ -275,9 +276,13 @@ def test_remove_task_successful(pages, logged_in_user):
     logger.info(f'Number of tasks before deletion = {tasks_count_before}')
     
     task_page.click_edit(task)
-    task_page.click_delete()
+    edit_task_page.click_delete()
+    
+    # Ждем перерендера колонки
+    task_page.wait_for_task_removal_in_column_by_id(status_column_id, tasks_count_before)
     
     updated_status_column = task_page.get_status_column_by_id(status_column_id)
+
     tasks_count_after = task_page.get_task_count_in_column(updated_status_column)
     logger.info(f'Number of tasks after deletion = {tasks_count_after}')
     
