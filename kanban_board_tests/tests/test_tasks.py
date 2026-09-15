@@ -276,13 +276,16 @@ def test_remove_task_successful(pages, logged_in_user):
     status_column = task_page.get_status_column_by_task(task)
     status_column_id = task_page.get_status_column_id(status_column)
     tasks_count_before = task_page.get_task_count_in_column(status_column)
-    logger.info(f'tasks_count = {tasks_count_before}')
+    logger.info(f'Number of tasks before deletion = {tasks_count_before}')
     
     task_page.click_edit(task)
     task_page.click_delete()
     
     updated_status_column = task_page.get_status_column_by_id(status_column_id)
     tasks_count_after = task_page.get_task_count_in_column(updated_status_column)
-    logger.info(f'tasks_count = {tasks_count_after}')
+    logger.info(f'Number of tasks after deletion = {tasks_count_after}')
     
+    assert tasks_count_before - 1 == tasks_count_after
+    
+    logger.info('The task has been successfully deleted.')
     
