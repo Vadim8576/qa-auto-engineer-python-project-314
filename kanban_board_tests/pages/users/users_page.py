@@ -1,6 +1,7 @@
 import logging
 import time
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
@@ -90,7 +91,16 @@ class UsersPage(BasePage, TableMixin, ButtonsMixin, UsersMixin):
                 
     
     def wait_for_user_removal_in_table(self, count_before):
+        def check_removal(driver):
+            try:
+                # Пытаемся распарсить таблицу
+                return len(self.table_parse()) < count_before
+            except StaleElementReferenceException:
+                # Таблица сейчас перерисовывается. 
+                # Возвращаем False, чтобы wait.until() повторил попытку на следующем тике.
+                return False
+
         self.wait.until(
-            lambda d: len(self.table_parse()) < count_before,
+            check_removal,
             message="User was not removed from the table after delete action"
         )

@@ -136,7 +136,14 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
         return len(tasks)
 
     def wait_for_task_removal_in_column_by_id(self, status_column_id, tasks_count_before):
+        def check_task_removal(driver):
+            try:
+                current_count = self.get_task_count_in_column_by_id(status_column_id)
+                return current_count < tasks_count_before
+            except (StaleElementReferenceException):
+                return False
+
         self.wait.until(
-            lambda d: self.get_task_count_in_column_by_id(status_column_id) < tasks_count_before,
+            check_task_removal,
             message='Task was not removed after delete action'
-        )
+    )

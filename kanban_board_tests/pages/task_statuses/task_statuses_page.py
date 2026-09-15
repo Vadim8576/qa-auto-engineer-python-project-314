@@ -1,6 +1,7 @@
 import logging
 
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
@@ -82,8 +83,14 @@ class TaskStatusesPage(BasePage, TableMixin, TaskStatusesMixin, ButtonsMixin):
                 }
                  
     def wait_for_task_status_removal(self, count_before):
+        def check_status_removal(driver):
+            try:
+                return len(self.table_parse()) < count_before
+            except (StaleElementReferenceException):
+                return False
+
         self.wait.until(
-            lambda d: len(self.table_parse()) < count_before,
+            check_status_removal,
             message="Task status was not removed from the table after delete action"
-        )
+    )
         
