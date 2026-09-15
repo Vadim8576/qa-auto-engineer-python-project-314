@@ -139,8 +139,9 @@ def test_remove_label_successful(pages, logged_in_user):
     labels_page.click_delete()
     logger.info('Click to "Delete"')
     
+    labels_page.wait_for_label_removal_in_table(labels_before_deletion_count)
+    
     # Снова парсим таблицу
-    menu.go_to(MENU_LABELS['labels']) # Обновляем страницу
     labels_after_deletion = labels_page.table_parse()
     labels_after_deletion_count = len(labels_after_deletion)
     logger.info(f'Users in the table after deletion: {labels_after_deletion_count}')

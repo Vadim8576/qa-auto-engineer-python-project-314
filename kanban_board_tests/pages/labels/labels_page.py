@@ -1,6 +1,7 @@
 import logging
 
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
@@ -73,7 +74,18 @@ class LabelsPage(BasePage, TableMixin, ButtonsMixin):
                 return {
                     'name': name
                 }
-                
+    
+    def wait_for_label_removal_in_table(self, count_before):
+        def check_label_removal(driver):
+            try:
+                return len(self.table_parse()) < count_before
+            except (StaleElementReferenceException):
+                return False
+
+        self.wait.until(
+            check_label_removal,
+            message="Label was not removed from the table after delete action"
+        )
     
         
         
