@@ -1,5 +1,5 @@
 import logging
-
+import time
 from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
@@ -77,7 +77,6 @@ class UsersPage(BasePage, TableMixin, ButtonsMixin, UsersMixin):
             cells = row.find_elements(*TableLocators.CELL)         
             row_data = [cell.text.strip() for cell in cells]
             row_user_id, email, first_name, last_name, _ = row_data[1:]
-            # row_user_id = row_data[1]
             
             if row_user_id == user_id:
                 logger.info(f'Click on checkbox with ID = {user_id}')
@@ -90,4 +89,8 @@ class UsersPage(BasePage, TableMixin, ButtonsMixin, UsersMixin):
                 }
                 
     
-        
+    def wait_for_user_removal_in_table(self, count_before):
+        self.wait.until(
+            lambda d: len(self.table_parse()) < count_before,
+            message="User was not removed from the table after delete action"
+        )

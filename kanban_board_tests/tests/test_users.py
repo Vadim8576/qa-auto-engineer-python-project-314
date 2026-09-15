@@ -182,6 +182,8 @@ def test_remove_user_successful(pages, logged_in_user):
     users_page.click_delete()
     logger.info('Click to "Delete"')
     
+    users_page.wait_for_user_removal_in_table(users_before_deletion_count)
+    
     # Снова парсим таблицу
     users_after_deletion = users_page.table_parse()
     users_after_deletion_count = len(users_after_deletion)

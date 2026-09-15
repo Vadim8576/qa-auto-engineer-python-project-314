@@ -80,7 +80,10 @@ class TaskStatusesPage(BasePage, TableMixin, TaskStatusesMixin, ButtonsMixin):
                     'name': name,
                     'slug': slug,
                 }
-                
-    
-        
+                 
+    def wait_for_task_status_removal(self, count_before):
+        self.wait.until(
+            lambda d: len(self.table_parse()) < count_before,
+            message="Task status was not removed from the table after delete action"
+        )
         

@@ -151,10 +151,13 @@ def test_remove_task_status_successful(pages, logged_in_user):
     task_status_page.click_delete()
     logger.info('Click to "Delete"')
     
+    task_status_page.wait_for_task_status_removal(task_statuses_before_deletion_count)
+    
     # Снова парсим таблицу
     task_status_after_deletion = task_status_page.table_parse()
     task_status_after_deletion_count = len(task_status_after_deletion)
     logger.info(f'Users in the table after deletion: {task_status_after_deletion_count}')
+    
     
     assert (task_statuses_before_deletion_count - 1) == task_status_after_deletion_count, 'The number of task status in the table does not match.'
     
