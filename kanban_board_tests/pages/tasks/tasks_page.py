@@ -1,13 +1,14 @@
 import logging
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
 from kanban_board_tests.pages.base_page import BasePage
 from kanban_board_tests.pages.locators.tasks_locators import TasksLocators
 from kanban_board_tests.mixins.tasks_mixin import TaksMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
-from kanban_board_tests.constants.task_consts import COLUMN_INDICES
+from kanban_board_tests.constants.task_consts import STATUS_TO_ID
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
         return self.PATH in self.current_url
     
     def are_all_tasks_visible(self):
-        def all_visible(driver):
+        def all_visible(_):
             elements = self.driver.find_elements(*TasksLocators.TASKS)
             if not elements:
                 return False
@@ -34,6 +35,7 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
                 except StaleElementReferenceException:
                     return False
             return True
+
         try:
             self.wait.until(all_visible)
             return True
@@ -61,7 +63,7 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
     
     def get_all_tasks(self):
         return self.driver.find_elements(*TasksLocators.TASKS)
-    
+
     def wait_for_task_count_change(self, old_count):
         self.wait.until(lambda d: len(self.get_all_tasks()) != old_count)
     
@@ -76,10 +78,17 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
         return filtered_labels
       
     def get_task_list_by_status(self, status):
-        column_number = COLUMN_INDICES[status]
-        column = self.driver.find_element(*TasksLocators.column_container(column_number))
-        tasks = column.find_elements(*TasksLocators.TASK) 
+        column_id = STATUS_TO_ID[status]
+        column = self.driver.find_element(*TasksLocators.column_container(column_id))
+        tasks = column.find_elements(*TasksLocators.TASKS) 
         return tasks
+    
+    def get_column_by_status(self, status):
+        column_id = STATUS_TO_ID[status]
+        return self.driver.find_element(*TasksLocators.column_container(column_id))
+    
+    def get_status_column_by_id(self, column_id):
+        return self.driver.find_element(*TasksLocators.column_container(column_id))
 
     def get_parse_task_list(self, task_list):
         parse_tasks = []
@@ -104,10 +113,23 @@ class TasksPage(BasePage, TaksMixin, TableMixin):
         
     def find_first_available_task(self):
         task = None
-        for column_status in COLUMN_INDICES:
+        for column_status in STATUS_TO_ID:
             task_list = self.get_task_list_by_status(column_status)
             if len(task_list) > 0:
                 task = task_list[0]
                 break
         return task
     
+    def drag_task_to_column(self, draggable_task, target_column):
+        actions = ActionChains(self.driver)
+        actions.drag_and_drop(draggable_task, target_column).perform()
+        # Небольшая пауза, чтобы UI успел обработать перемещение
+        self.wait.until(lambda d: True)
+        
+    def get_status_column_by_task(self, task):
+        return task.find_element(By.XPATH, './parent::*')
+    
+    def get_status_column_id(self, status_column):
+        return status_column.get_attribute('data-rfd-droppable-id')
+
+        

@@ -1,8 +1,10 @@
 import logging
 import time
+import random
 
 from kanban_board_tests.data.tasks import TASK_DATA
-from kanban_board_tests.constants.task_consts import COLUMN_INDICES
+from kanban_board_tests.constants.task_consts import STATUS_TO_ID
+from kanban_board_tests.constants.task_consts import ID_TO_STATUS
 from kanban_board_tests.constants.menu_consts import MENU_LABELS
 from kanban_board_tests.pages.menu_component import Menu
 from kanban_board_tests.pages.tasks.tasks_page import TasksPage
@@ -111,7 +113,7 @@ def test_filter_by_status(pages, logged_in_user):
     
     all_tasks_before = task_page.get_all_tasks()
     
-    for status in COLUMN_INDICES:      
+    for status in STATUS_TO_ID:      
         logger.info(f'Filter: {status}')
         task_page.select_status(status)
         task_page.wait_for_task_count_change(len(all_tasks_before))      
@@ -167,6 +169,67 @@ def test_all_tasks_visability_and_clickable(pages, logged_in_user):
     assert task_page.are_all_tasks_visible()
     assert task_page.are_all_tasks_clickable()
     logger.info('All tasks have been successfully loaded.')
+
+
+def test_drag_and_drop_task(pages, logged_in_user):
+    menu = pages(Menu)
+    task_page = pages(TasksPage)
+
+    menu.go_to(MENU_LABELS["tasks"])
+
+    # Находим задачу для перетаскивания
+    draggable_task = task_page.find_first_available_task()
+
+    # Определяем исходную колонку
+    source_column = task_page.get_status_column_by_task(draggable_task)
+    source_column_id = task_page.get_status_column_id(source_column)
+    source_column_status = ID_TO_STATUS[source_column_id]
+
+    # Считаем задачи в исходной колонке ДО
+    source_column_task_count_before = len(
+        task_page.get_task_list_by_status(source_column_status)
+    )
+
+    # Выбираем случайную целевую колонку (не ту же самую)
+    available_ids = [v for v in STATUS_TO_ID.values() if v != source_column_id]
+
+    target_random_id = random.choice(available_ids)
+    target_status_column = task_page.get_status_column_by_id(target_random_id)
+    target_column_status = ID_TO_STATUS[target_random_id]
+
+    # Считаем задачи в целевой колонке ДО
+    target_column_task_count_before = len(
+        task_page.get_task_list_by_status(target_column_status)
+    )
+
+    # Выполняем Drag and Drop
+    task_page.drag_task_to_column(draggable_task, target_status_column)
+
+    # Получаем актуальные количества ПОСЛЕ
+    actual_source_column_task_count_after = len(
+        task_page.get_task_list_by_status(source_column_status)
+    )
+    actual_target_column_task_count_after = len(
+        task_page.get_task_list_by_status(target_column_status)
+    )
+
+    # Ожидаемые значения
+    expected_source_column_task_count_after = source_column_task_count_before - 1
+    expected_target_column_task_count_after = target_column_task_count_before + 1
+
+    assert actual_source_column_task_count_after == expected_source_column_task_count_after, (
+        f'Source column task count mismatch: got {actual_source_column_task_count_after}, '
+        f'expected {expected_source_column_task_count_after}. '
+        f'Before: {source_column_task_count_before}'
+    )
+
+    assert actual_target_column_task_count_after == expected_target_column_task_count_after, (
+        f'Target column task count mismatch: got {actual_target_column_task_count_after}, '
+        f'expected {expected_target_column_task_count_after}. '
+        f'Before: {target_column_task_count_before}'
+    )
+
+
 
       
 '''   

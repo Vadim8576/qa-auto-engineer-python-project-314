@@ -20,8 +20,6 @@ class TasksLocators:
     EDIT_BUTTON = (By.CSS_SELECTOR, 'a[aria-label="Edit"]')
     SHOW_BUTTON = (By.CSS_SELECTOR, 'a[aria-label="Show"]')
     
-    TASK = (By.CSS_SELECTOR, 'div[role="button"]') 
-    
     STATUS_COLUMNS = (By.CSS_SELECTOR, '[data-rfd-droppable-id]')
     TASKS = (By.CSS_SELECTOR, '[data-rfd-draggable-id]')
     
