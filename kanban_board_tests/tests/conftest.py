@@ -36,6 +36,12 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     result = outcome.get_result()
     setattr(item, 'rep_' + result.when, result)
+    
+    if result.failed:
+        logger.error(f"TEST FAILED AT STAGE '{result.when}': {item.nodeid}")
+        if result.longrepr:
+            # longrepr содержит полный traceback и детали AssertionError
+            logger.error(f"Error details:\n{result.longrepr}")
 
 @pytest.fixture(scope='function')
 def driver(request):
