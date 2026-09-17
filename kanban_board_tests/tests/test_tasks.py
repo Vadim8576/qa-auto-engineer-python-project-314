@@ -185,7 +185,7 @@ def test_filter_by_label(pages, logged_in_user):
         task_page.select_label_filter(label)
         task_page.wait_for_task_count_change(len(all_tasks_before))   
         all_tasks_after_len = len(task_page.get_all_tasks())
-        all_tasks_before_len = all_tasks_before
+        all_tasks_before_len = len(all_tasks_before)
         assert all_tasks_after_len < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after_len} < {all_tasks_before_len}'
         logger.info(f'Filter {label} has triggered.')
 
