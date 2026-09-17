@@ -149,3 +149,19 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
         except TimeoutException as e:
             logger.warning(e)
 
+    def wait_for_task_count_change(self, old_count):
+        def check(driver):
+            try:
+                current_count = len(self.get_all_tasks())
+                return current_count != old_count
+            except StaleElementReferenceException:
+                return False
+            
+        try:
+            self.wait.until(
+                check, 
+                message=f'The quantity has not changed, it remains {old_count}'
+            )
+        except TimeoutException as e:
+            
+            logger.warning(e)
