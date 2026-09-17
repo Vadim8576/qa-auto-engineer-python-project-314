@@ -1,7 +1,7 @@
 import logging
 import os
 
-import pytest, tempfile, shutil
+import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -45,8 +45,6 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture(scope='function')
 def driver(request):
-    worker = getattr(request.config, "workerinput", {}).get("workerid", "gw0")
-    profile = tempfile.mkdtemp(prefix=f"profile-{worker}-")
 
     options = Options()
     options.add_argument('--window-size=1366,768')
@@ -59,7 +57,6 @@ def driver(request):
 
     yield driver
 
-
     rep = getattr(request.node, 'rep_call', None)
     if rep and rep.failed:
         name = request.node.name
@@ -71,7 +68,6 @@ def driver(request):
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(driver.page_source)
     driver.quit()
-    shutil.rmtree(profile, ignore_errors=True)
 
 @pytest.fixture
 def pages(driver):
