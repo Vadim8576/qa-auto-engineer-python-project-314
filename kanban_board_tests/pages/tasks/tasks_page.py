@@ -133,11 +133,11 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
         tasks = column.find_elements(*TasksLocators.TASKS)
         return len(tasks)
 
-    def wait_for_task_count_change(self, old_count):
+    def wait_for_task_removal_in_column_by_id(self, status_column_id, old_count):
         def check(driver):
             try:
-                current_count = len(self.get_all_tasks())
-                return current_count != old_count
+                current_count = self.get_task_count_in_column_by_id(status_column_id)
+                return current_count < old_count
             except StaleElementReferenceException:
                 return False
 
@@ -148,3 +148,4 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
             )
         except TimeoutException as e:
             logger.warning(e)
+
