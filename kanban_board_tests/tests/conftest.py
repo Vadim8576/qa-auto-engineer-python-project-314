@@ -1,7 +1,7 @@
 import logging
 import os
 
-import pytest
+import pytest, tempfile, shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -45,16 +45,20 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture(scope='function')
 def driver(request):
+    worker = getattr(request.config, "workerinput", {}).get("workerid", "gw0")
+    profile = tempfile.mkdtemp(prefix=f"profile-{worker}-")
+
     options = Options()
     options.add_argument('--window-size=1366,768')
     options.add_argument('--headless=new')          # без окна
     options.add_argument('--disable-notifications')
-    options.add_argument('--no-sandbox')            # важно в контейнерах/WSL
+    options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(options=options)
 
     yield driver
+
 
     rep = getattr(request.node, 'rep_call', None)
     if rep and rep.failed:
@@ -67,6 +71,7 @@ def driver(request):
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(driver.page_source)
     driver.quit()
+    shutil.rmtree(profile, ignore_errors=True)
 
 @pytest.fixture
 def pages(driver):
