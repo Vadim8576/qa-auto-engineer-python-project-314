@@ -23,7 +23,7 @@ jobs:
         run: uv sync --group dev
       - name: Run tests
         run: |
-          make test
+          uv run python -m pytest
         env:
-          APP_BASE_URL: http://host.docker.internal:5173
+          APP_BASE_URL: http://localhost:5173
           SELENIUM_MANAGER_DISABLE: 'true'
