@@ -140,9 +140,9 @@ def test_filter_by_status(pages, logged_in_user):
         logger.info(f'Filter: {name}')
         task_page.select_status_filter(name)
         task_page.wait_for_task_count_change(len(all_tasks_before))      
-        all_tasks_after = task_page.get_all_tasks()
-        all_tasks_before_len = all_tasks_before
-        assert all_tasks_after < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after} < {all_tasks_before_len}'
+        all_tasks_after_len = len(task_page.get_all_tasks())
+        all_tasks_before_len = len(all_tasks_before)
+        assert all_tasks_after_len < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after_len} < {all_tasks_before_len}'
         logger.info(f'Filter {name} has triggered.')
         
 def test_filter_by_assignee(pages, logged_in_user): 
@@ -164,9 +164,8 @@ def test_filter_by_assignee(pages, logged_in_user):
         logger.info(f'Filter: {email}')
         task_page.select_assignee_filter(email)
         task_page.wait_for_task_count_change(len(all_tasks_before))
-        all_tasks_after = task_page.get_all_tasks()
-        all_tasks_after_len = all_tasks_after
-        all_tasks_before_len = all_tasks_before
+        all_tasks_after_len = len(task_page.get_all_tasks())
+        all_tasks_before_len = len(all_tasks_before)
         assert len(all_tasks_after_len) < len(all_tasks_before_len), f'The filter should reduce the number of tasks. Expected: {all_tasks_after_len} < {all_tasks_before_len}'
         logger.info(f'Filter {email} has triggered.')
 
@@ -185,9 +184,9 @@ def test_filter_by_label(pages, logged_in_user):
         logger.info(f'Filter: {label}')
         task_page.select_label_filter(label)
         task_page.wait_for_task_count_change(len(all_tasks_before))   
-        all_tasks_after = task_page.get_all_tasks()
+        all_tasks_after_len = len(task_page.get_all_tasks())
         all_tasks_before_len = all_tasks_before
-        assert all_tasks_after < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after} < {all_tasks_before_len}'
+        assert all_tasks_after_len < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after_len} < {all_tasks_before_len}'
         logger.info(f'Filter {label} has triggered.')
 
 def test_all_tasks_visability_and_clickable(pages, logged_in_user):
