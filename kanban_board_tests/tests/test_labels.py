@@ -146,7 +146,7 @@ def test_remove_label_successful(pages, logged_in_user):
     labels_after_deletion_count = len(labels_after_deletion)
     logger.info(f'Users in the table after deletion: {labels_after_deletion_count}')
     
-    assert (labels_before_deletion_count - 1) == labels_after_deletion_count, 'The number of labels in the table does not match.'
+    assert (labels_before_deletion_count - 1) == labels_after_deletion_count, f'The number of labels in the table does not match. Expected: {labels_before_deletion_count - 1} == {labels_after_deletion_count}'
     
     # Проверяем, что удаленный пользователь отсутствует в таблице
     assert not any(

@@ -21,23 +21,23 @@ class TaksMixin:
     def set_task_description(self, description):
         self.type(TasksLocators.DESCRIPTION, description)
     
-    def select_assignee(self, option):
+    def select_assignee_filter(self, option):
         self.click_to_dropdown(TasksLocators.ASSIGNEE_COMBOBOX)
         self.click_to_option(option)
     
-    def select_status(self, option):
+    def select_status_filter(self, option):
         self.click_to_dropdown(TasksLocators.STATUS_COMBOBOX)
         self.click_to_option(option)
     
-    def select_label(self, option):
+    def select_label_filter(self, option):
         self.click_to_dropdown(TasksLocators.LABEL_COMBOBOX)
         self.click_to_option(option)
         
     def set_task_data(self, task_data):
         self.set_task_title(task_data['title'])
         self.set_task_description(task_data['description'])
-        self.select_assignee(task_data['assignee'])
-        self.select_status(task_data['status'])
+        self.select_assignee_filter(task_data['assignee'])
+        self.select_status_filter(task_data['status'])
         self.click_save()
     
     def get_options_list(self, locator):

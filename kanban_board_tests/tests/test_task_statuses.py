@@ -159,7 +159,7 @@ def test_remove_task_status_successful(pages, logged_in_user):
     logger.info(f'Users in the table after deletion: {task_status_after_deletion_count}')
     
     
-    assert (task_statuses_before_deletion_count - 1) == task_status_after_deletion_count, 'The number of task status in the table does not match.'
+    assert (task_statuses_before_deletion_count - 1) == task_status_after_deletion_count, f'The number of task status in the table does not match. Expected: {task_statuses_before_deletion_count - 1} == {task_status_after_deletion_count}'
     
     # Проверяем, что удаленный пользователь отсутствует в таблице
     assert not any(

@@ -189,7 +189,7 @@ def test_remove_user_successful(pages, logged_in_user):
     users_after_deletion_count = len(users_after_deletion)
     logger.info(f'Users in the table after deletion: {users_after_deletion_count}')
     
-    assert (users_before_deletion_count - 1) == users_after_deletion_count, 'The number of users in the table does not match.'
+    assert (users_before_deletion_count - 1) == users_after_deletion_count, 'The number of users in the table does not match. Expected: {users_before_deletion_count - 1} == {users_after_deletion_count}'
     
     # Проверяем, что удаленный пользователь отсутствует в таблице
     assert not any(

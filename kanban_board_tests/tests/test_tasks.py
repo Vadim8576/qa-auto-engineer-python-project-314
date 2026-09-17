@@ -138,10 +138,11 @@ def test_filter_by_status(pages, logged_in_user):
     
     for name in task_statuses:      
         logger.info(f'Filter: {name}')
-        task_page.select_status(name)
+        task_page.select_status_filter(name)
         task_page.wait_for_task_count_change(len(all_tasks_before))      
         all_tasks_after = task_page.get_all_tasks()
-        assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
+        all_tasks_before_len = all_tasks_before
+        assert all_tasks_after < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after} < {all_tasks_before_len}'
         logger.info(f'Filter {name} has triggered.')
         
 def test_filter_by_assignee(pages, logged_in_user): 
@@ -161,10 +162,12 @@ def test_filter_by_assignee(pages, logged_in_user):
     
     for email in assignee:      
         logger.info(f'Filter: {email}')
-        task_page.select_assignee(email)
+        task_page.select_assignee_filter(email)
         task_page.wait_for_task_count_change(len(all_tasks_before))
         all_tasks_after = task_page.get_all_tasks()
-        assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
+        all_tasks_after_len = all_tasks_after
+        all_tasks_before_len = all_tasks_before
+        assert len(all_tasks_after_len) < len(all_tasks_before_len), f'The filter should reduce the number of tasks. Expected: {all_tasks_after_len} < {all_tasks_before_len}'
         logger.info(f'Filter {email} has triggered.')
 
 def test_filter_by_label(pages, logged_in_user): 
@@ -180,10 +183,11 @@ def test_filter_by_label(pages, logged_in_user):
     
     for label in labels:      
         logger.info(f'Filter: {label}')
-        task_page.select_label(label)
+        task_page.select_label_filter(label)
         task_page.wait_for_task_count_change(len(all_tasks_before))   
         all_tasks_after = task_page.get_all_tasks()
-        assert len(all_tasks_after) < len(all_tasks_before), 'The filter should reduce the number of tasks.'
+        all_tasks_before_len = all_tasks_before
+        assert all_tasks_after < all_tasks_before_len, f'The filter should reduce the number of tasks. Expected: {all_tasks_after} < {all_tasks_before_len}'
         logger.info(f'Filter {label} has triggered.')
 
 def test_all_tasks_visability_and_clickable(pages, logged_in_user):
@@ -232,7 +236,7 @@ def test_moving_task_to_another_column(pages, logged_in_user):
 
     # Меняем статус
     task_page.click_edit(task)
-    task_page.select_status(target_column_status)
+    task_page.select_status_filter(target_column_status)
     task_page.click_save()
     
     # Получаем актуальные количества ПОСЛЕ
@@ -278,7 +282,6 @@ def test_remove_task_successful(pages, logged_in_user):
     task_page.click_edit(task)
     edit_task_page.click_delete()
     
-    # Ждем перерендера колонки
     task_page.wait_for_task_removal_in_column_by_id(status_column_id, tasks_count_before)
     
     updated_status_column = task_page.get_status_column_by_id(status_column_id)
@@ -286,7 +289,7 @@ def test_remove_task_successful(pages, logged_in_user):
     tasks_count_after = task_page.get_task_count_in_column(updated_status_column)
     logger.info(f'Number of tasks after deletion = {tasks_count_after}')
     
-    assert tasks_count_before - 1 == tasks_count_after
+    assert (tasks_count_before - 1) == tasks_count_after, 'The number of tasks does not match.  Expected: {tasks_count_before - 1} == {tasks_count_after}'
     
     logger.info('The task has been successfully deleted.')
     

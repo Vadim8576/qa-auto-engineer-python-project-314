@@ -1,7 +1,7 @@
 import logging
 
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
@@ -81,16 +81,20 @@ class TaskStatusesPage(BasePage, TableMixin, TaskStatusesMixin, ButtonsMixin):
                     'name': name,
                     'slug': slug,
                 }
-                 
-    def wait_for_task_status_removal(self, count_before):
-        def check_status_removal(driver):
-            try:
-                return len(self.table_parse()) < count_before
-            except (StaleElementReferenceException):
-                return False
 
-        self.wait.until(
-            check_status_removal,
-            message="Task status was not removed from the table after delete action"
-    )
+    def wait_for_task_status_removal(self, old_count):
+        def check(driver):
+            try:
+                current_count = len(self.table_parse())
+                return current_count < old_count
+            except StaleElementReferenceException:
+                return False
+        
+        try:
+            self.wait.until(
+                check, 
+                message=f'The expected quantity should be < {old_count}'
+            )
+        except TimeoutException as e:
+            logger.warning(e)
         

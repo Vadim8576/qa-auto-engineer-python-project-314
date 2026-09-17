@@ -1,7 +1,7 @@
 import logging
 import time
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
@@ -88,19 +88,19 @@ class UsersPage(BasePage, TableMixin, ButtonsMixin, UsersMixin):
                     'first_name': first_name,
                     'last_name': last_name,
                 }
-                
-    
-    def wait_for_user_removal_in_table(self, count_before):
-        def check_removal(driver):
-            try:
-                # Пытаемся распарсить таблицу
-                return len(self.table_parse()) < count_before
-            except StaleElementReferenceException:
-                # Таблица сейчас перерисовывается. 
-                # Возвращаем False, чтобы wait.until() повторил попытку на следующем тике.
-                return False
 
-        self.wait.until(
-            check_removal,
-            message="User was not removed from the table after delete action"
-        )
+    def wait_for_user_removal_in_table(self, old_count):
+        def check(driver):
+            try:
+                current_count = len(self.table_parse())
+                return current_count < old_count
+            except StaleElementReferenceException:
+                return False
+            
+        try:
+            self.wait.until(
+                check, 
+                message=f'The expected quantity should be < {old_count}'
+            )
+        except TimeoutException as e:
+            logger.warning(e)

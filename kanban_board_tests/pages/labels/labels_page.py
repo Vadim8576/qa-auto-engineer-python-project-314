@@ -1,7 +1,7 @@
 import logging
 
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
@@ -75,17 +75,19 @@ class LabelsPage(BasePage, TableMixin, ButtonsMixin):
                     'name': name
                 }
     
-    def wait_for_label_removal_in_table(self, count_before):
-        def check_label_removal(driver):
+    def wait_for_label_removal_in_table(self, old_count):
+        def check(driver):
             try:
-                return len(self.table_parse()) < count_before
-            except (StaleElementReferenceException):
+                current_count = len(self.table_parse())
+                return current_count < old_count
+            except StaleElementReferenceException:
                 return False
-
-        self.wait.until(
-            check_label_removal,
-            message="Label was not removed from the table after delete action"
-        )
     
-        
+        try:
+            self.wait.until(
+                check, 
+                message=f'The expected quantity should be < {old_count}'
+            )
+        except TimeoutException as e:
+            logger.warning(e)
         
