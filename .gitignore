@@ -6,3 +6,5 @@ screenshots/
 *.pyc
 .venv
 *_cache/
+.coverage
+coverage.xml
