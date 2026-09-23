@@ -8,16 +8,6 @@ jobs:
   sonarqube:
     name: SonarQube Cloud
     runs-on: ubuntu-latest
-    services:
-      app:
-        image: hexletprojects/qa_auto_python_testing_kanban_board_project_ru_app
-        ports:
-          - 5173:5173
-        options: >-
-          --health-cmd="curl -f http://localhost:5173/ || exit 1"
-          --health-interval=2s
-          --health-timeout=5s
-          --health-retries=10
     steps:
       - uses: actions/checkout@v6
         with:
@@ -30,6 +20,23 @@ jobs:
         run: |
           pip install uv
           uv sync --group dev
+      - name: Start app container
+        run: |
+          docker run --rm -d -p 5173:5173 hexletprojects/qa_auto_python_testing_kanban_board_project_ru_app
+      - name: Wait for app to be ready
+        run: |
+          for i in $(seq 1 30); do
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 || true)
+            if [ "$status" != "000" ]; then
+              echo "App is ready (status: $status)"
+              exit 0
+            fi
+            echo "Waiting for app... ($i/30)"
+            sleep 2
+          done
+          echo "App did not start in time"
+          docker logs $(docker ps -q --filter ancestor=hexletprojects/qa_auto_python_testing_kanban_board_project_ru_app)
+          exit 1
       - name: Run tests to generate coverage report
         run: |
           uv run pytest --cov=gendiff --cov-report=xml
