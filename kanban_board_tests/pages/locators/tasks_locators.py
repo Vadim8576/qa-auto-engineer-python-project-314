@@ -3,10 +3,11 @@ from selenium.webdriver.common.by import By
 
 class TasksLocators:
     PRESENTATION = (By.CSS_SELECTOR, 'div[role="presentation"]')
-    
+    COLUMN_CONTAINER = (By.CSS_SELECTOR, '.RaList-content')
     ASSIGNEE_COMBOBOX = (By.XPATH, '//div[@role="combobox" and @id=//label[starts-with(normalize-space(), "Assignee")]/@for]')
     STATUS_COMBOBOX = (By.XPATH, '//div[@role="combobox" and @id=//label[starts-with(normalize-space(), "Status")]/@for]')
     LABEL_COMBOBOX = (By.XPATH, '//div[@role="combobox" and @id=//label[starts-with(normalize-space(), "Label")]/@for]')
+    CLEAR_FILTER_OPTION = (By.CSS_SELECTOR, 'li[title="Clear value"]')
 
     TITLE = (By.CSS_SELECTOR, 'input[name="title"]')
     DESCRIPTION = (By.CSS_SELECTOR, 'textarea[name="content"]')

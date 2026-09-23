@@ -2,6 +2,7 @@ import logging
 
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.constants.task_consts import STATUS_TO_ID
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
@@ -62,7 +63,11 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
             return False
     
     def get_all_tasks(self):
+        self.wait.until(
+            EC.visibility_of_any_elements_located(TasksLocators.COLUMN_CONTAINER)
+        )
         return self.driver.find_elements(*TasksLocators.TASKS)
+
 
     
     def get_all_assignees(self):
@@ -78,8 +83,15 @@ class TasksPage(BasePage, TaksMixin, TableMixin, ButtonsMixin):
       
     def get_task_list_by_status(self, status):
         column_id = STATUS_TO_ID[status]
-        column = self.driver.find_element(*TasksLocators.column_container(column_id))
+        column = self.wait.until(
+            EC.presence_of_element_located(TasksLocators.column_container(column_id))
+        )
+        
         tasks = column.find_elements(*TasksLocators.TASKS) 
+        
+        column = self.wait.until(
+        EC.presence_of_element_located(TasksLocators.column_container(column_id))
+    )
         return tasks
     
     def get_column_by_status(self, status):

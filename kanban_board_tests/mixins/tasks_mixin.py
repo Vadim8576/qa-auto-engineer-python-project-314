@@ -62,7 +62,7 @@ class TaksMixin:
 
     
     def click_to_dropdown(self, selector):
-        trigger = self.driver.find_element(*selector)
+        trigger = self.wait.until(EC.element_to_be_clickable(selector))
 
         self.wait.until(lambda _: trigger.is_displayed() and trigger.is_enabled())
         try:
