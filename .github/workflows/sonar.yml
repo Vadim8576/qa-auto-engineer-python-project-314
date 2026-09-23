@@ -5,6 +5,18 @@ on:
   - pull_request
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      app:
+        image: hexletprojects/qa_auto_python_testing_kanban_board_project_ru_app
+        ports:
+          - 5173:5173
+        options: >-
+          --health-cmd="curl -f http://localhost:5173/ || exit 1"
+          --health-interval=2s
+          --health-timeout=5s
+          --health-retries=10
   sonarqube:
     name: SonarQube Cloud
     runs-on: ubuntu-latest
