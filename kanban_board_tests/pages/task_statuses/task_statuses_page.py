@@ -1,7 +1,7 @@
 import logging
 
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
 
 from kanban_board_tests.mixins.buttons_mixin import ButtonsMixin
 from kanban_board_tests.mixins.table_mixin import TableMixin
