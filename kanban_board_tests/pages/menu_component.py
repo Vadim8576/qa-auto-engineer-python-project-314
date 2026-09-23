@@ -1,5 +1,4 @@
 import logging
-import time
 
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -11,18 +10,8 @@ from kanban_board_tests.pages.locators.menu_locators import (
 logger = logging.getLogger(__name__)
 
 class Menu(BasePage):
-    def go_to(self, page_name):
-        time.sleep(0.5)
-        items = self.wait.until(EC.presence_of_all_elements_located(MenuLocators.MENU_ITEMS))
-        
-        for item in items:
-            if page_name.strip() == item.text.strip():
-                item.click()
-                logger.info(f'Menu button "{item.text}" pressed. Go to {item.text} page.')
-                return
-
-        raise ValueError(
-            f'Menu item "{page_name}" not found'
-        )
-        
-    
+    def go_to(self, page_name):    
+        page_name = page_name.strip()
+        item = self.wait.until(EC.element_to_be_clickable(MenuLocators.menu_item(page_name)))
+        item.click()
+        logger.info(f'Menu button "{page_name}" pressed.')
