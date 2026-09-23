@@ -5,7 +5,8 @@ on:
   - pull_request
 
 jobs:
-  build:
+  sonarqube:
+    name: SonarQube Cloud
     runs-on: ubuntu-latest
     services:
       app:
@@ -17,9 +18,6 @@ jobs:
           --health-interval=2s
           --health-timeout=5s
           --health-retries=10
-  sonarqube:
-    name: SonarQube Cloud
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
